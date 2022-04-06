@@ -1,4 +1,4 @@
-# scylladb-and-go
+# ScyllaDB and Go
 Using ScyllaDB with Go.
 
 ## Technologies

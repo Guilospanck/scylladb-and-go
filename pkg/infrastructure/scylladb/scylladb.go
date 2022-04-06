@@ -18,6 +18,7 @@ func CreateCluster(consistency gocql.Consistency, keyspace string, hosts ...stri
 	cluster.Keyspace = keyspace
 	cluster.Timeout = 5 * time.Second
 	cluster.RetryPolicy = retryPolicy
+	cluster.PoolConfig.HostSelectionPolicy = gocql.TokenAwareHostPolicy(gocql.RoundRobinHostPolicy())
 
 	return cluster
 }
