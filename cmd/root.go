@@ -1,11 +1,12 @@
 package cmd
 
 import (
-	"base/pkg/infrastructure/logger"
-	_ "base/pkg/infrastructure/scylladb"
+	_ "base/pkg/infrastructure/environments"
 )
 
-func Execute() {
-	logger := logger.NewLogger()
-	logger.Info("Initiated!")
+func Execute() error {
+	container := NewContainer()
+	println(container)
+
+	return nil
 }

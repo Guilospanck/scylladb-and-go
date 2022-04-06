@@ -1,12 +1,14 @@
-package scylladb
+package database
 
 import (
+	"base/pkg/application/interfaces"
 	_ "base/pkg/infrastructure/environments"
-	"log"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/gocql/gocql"
+	"go.uber.org/zap"
 )
 
 var session *gocql.Session
@@ -15,6 +17,7 @@ var cluster *gocql.ClusterConfig
 type scyllaDBConnection struct {
 	consistency gocql.Consistency
 	keyspace    string
+	logger      interfaces.ILogger
 	hosts       []string
 }
 
@@ -37,9 +40,9 @@ func (conn *scyllaDBConnection) createCluster() *gocql.ClusterConfig {
 	return clusterCreated
 }
 
-func (conn *scyllaDBConnection) createSession() {
+func (conn *scyllaDBConnection) createSession() (*gocql.Session, error) {
 	if session != nil {
-		return
+		return session, nil
 	}
 
 	if cluster != nil {
@@ -48,17 +51,27 @@ func (conn *scyllaDBConnection) createSession() {
 
 	sessionCreated, err := cluster.CreateSession()
 	if err != nil {
-
+		conn.logger.Error("An error occurred while creating DB session: ", zap.Error(err))
+		return nil, err
 	}
 	session = sessionCreated
+	return sessionCreated, nil
 }
 
-func NewScyllaDBConnection() *scyllaDBConnection {
-	return &scyllaDBConnection{}
+func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, logger interfaces.ILogger, hosts ...string) *scyllaDBConnection {
+	return &scyllaDBConnection{
+		consistency,
+		keyspace,
+		logger,
+		hosts,
+	}
 }
 
-func init() {
-	log.Println(os.Getenv("SCYLLA_CONSISTENCY"))
-	log.Println(os.Getenv("SCYLLA_KEYSPACE"))
-	log.Println(os.Getenv("SCYLLA_HOSTS"))
+func GetConnection(logger interfaces.ILogger) (*gocql.Session, error) {
+	consistency := gocql.ParseConsistency(os.Getenv("SCYLLA_CONSISTENCY"))
+	keyspace := os.Getenv("SCYLLA_KEYSPACE")
+	hosts := strings.Split(os.Getenv("SCYLLA_HOSTS"), ",")
+
+	connection := NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
+	return connection.createSession()
 }
