@@ -6,7 +6,13 @@ import (
 	"github.com/gocql/gocql"
 )
 
+var cluster *gocql.ClusterConfig
+
 func CreateCluster(consistency gocql.Consistency, keyspace string, hosts ...string) *gocql.ClusterConfig {
+	if cluster != nil {
+		return cluster
+	}
+
 	retryPolicy := &gocql.ExponentialBackoffRetryPolicy{
 		Min:        time.Second,
 		Max:        10 * time.Second,
