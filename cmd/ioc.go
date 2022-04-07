@@ -16,7 +16,7 @@ type Container struct {
 	logger interfaces.ILogger
 }
 
-func ShowValues[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger) {
+func ShowValuesSelectAll[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger) {
 	results, err := querybuilder.SelectAll()
 	if err != nil {
 		logger.Error("SelectAll() error", zap.Error(err))
@@ -40,7 +40,16 @@ func NewContainer() *Container {
 	model := models.NewMutantDataTable().Table
 	querybuilder := database.NewQueryBuider[entities.MutantData](model, session, logger)
 
-	ShowValues[entities.MutantData](querybuilder, logger)
+	/* Insert */
+	// newData := entities.MutantData{
+	// 	FirstName:       "Guilherme",
+	// 	LastName:        "Rodrigues",
+	// 	Address:         "R Github",
+	// 	PictureLocation: "Github",
+	// }
+	// querybuilder.Insert(&newData)
+
+	ShowValuesSelectAll[entities.MutantData](querybuilder, logger)
 
 	return &Container{
 		logger,

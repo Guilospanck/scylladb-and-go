@@ -14,6 +14,20 @@ type queryBuilder[T any] struct {
 	logger  interfaces.ILogger
 }
 
+func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
+	insertStatement, insertNames := queryBuilder.model.Insert()
+
+	insertQuery := queryBuilder.session.Query(insertStatement, insertNames)
+
+	err := insertQuery.BindStruct(insertData).ExecRelease()
+	if err != nil {
+		queryBuilder.logger.Error("Insert error: ", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
 func (queryBuilder *queryBuilder[T]) SelectAll() ([]T, error) {
 	selectStatement, statementNames := queryBuilder.model.SelectAll()
 	selectQuery := queryBuilder.session.Query(selectStatement, statementNames)
