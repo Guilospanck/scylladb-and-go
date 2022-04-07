@@ -63,6 +63,23 @@ func (queryBuilder *queryBuilder[T]) Select(dataToGet *T) ([]T, error) {
 	return results, nil
 }
 
+/* It'll return data based on the Primary Key (Partition + Clustering key)
+*  SELECT * FROM table WHERE {primary key = {}};
+ */
+func (queryBuilder *queryBuilder[T]) Get(dataToGet *T) ([]T, error) {
+	selectStatement, selectNames := queryBuilder.model.Get()
+	selectQuery := queryBuilder.session.Query(selectStatement, selectNames)
+
+	var results []T
+	err := selectQuery.BindStruct(dataToGet).SelectRelease(&results)
+	if err != nil {
+		queryBuilder.logger.Error("Select-BindStruct-SelectRelease() error", zap.Error(err))
+		return nil, err
+	}
+
+	return results, nil
+}
+
 /* It'll everything from table.
 *  SELECT * FROM table;
  */

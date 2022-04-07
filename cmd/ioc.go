@@ -43,6 +43,17 @@ func ShowSelect[T any](querybuilder interfaces.IQueryBuilder[T], logger interfac
 	}
 }
 
+func ShowGet[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger, dataToBeSearched *T) {
+	results, err := querybuilder.Get(dataToBeSearched)
+	if err != nil {
+		logger.Error("Get() error", zap.Error(err))
+	}
+
+	for _, value := range results {
+		log.Printf("%+v", value)
+	}
+}
+
 func NewContainer() *Container {
 	logger := logger.NewLogger()
 
@@ -66,18 +77,18 @@ func NewContainer() *Container {
 	// querybuilder.Insert(&newData)
 
 	/* Delete */
-	timeLayout := "2006-01-02 15:04:05 -0700 MST"
-	timestamp, err := time.Parse(timeLayout, "2017-11-11 11:05:00 +0000 UTC")
-	if err != nil {
-		logger.Info(err.Error())
-	}
+	// timeLayout := "2006-01-02 15:04:05 -0700 MST"
+	// timestamp, err := time.Parse(timeLayout, "2017-11-11 11:05:00 +0000 UTC")
+	// if err != nil {
+	// 	logger.Info(err.Error())
+	// }
 
-	dataToBeDeleted := entities.TrackingDataEntity{
-		FirstName: "Bob",
-		LastName:  "Loblaw",
-		Timestamp: timestamp,
-	}
-	querybuilder.Delete(&dataToBeDeleted)
+	// dataToBeDeleted := entities.TrackingDataEntity{
+	// 	FirstName: "Bob",
+	// 	LastName:  "Loblaw",
+	// 	Timestamp: timestamp,
+	// }
+	// querybuilder.Delete(&dataToBeDeleted)
 
 	/* Select */
 	// dataToBeSearched := entities.TrackingDataEntity{
@@ -85,6 +96,20 @@ func NewContainer() *Container {
 	// 	LastName:  "Loblaw",
 	// }
 	// ShowSelect[entities.TrackingDataEntity](querybuilder, logger, &dataToBeSearched)
+
+	/* Get */
+	timeLayout := "2006-01-02 15:04:05 -0700 MST"
+	timestamp, err := time.Parse(timeLayout, "2017-11-11 10:05:00 +0000 UTC")
+	if err != nil {
+		logger.Info(err.Error())
+	}
+
+	dataToBeSearched := entities.TrackingDataEntity{
+		FirstName: "Bob",
+		LastName:  "Loblaw",
+		Timestamp: timestamp,
+	}
+	ShowGet[entities.TrackingDataEntity](querybuilder, logger, &dataToBeSearched)
 
 	/* Select All */
 	// ShowValuesSelectAll[entities.TrackingDataEntity](querybuilder, logger)
