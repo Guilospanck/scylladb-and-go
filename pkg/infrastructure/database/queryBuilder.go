@@ -8,7 +8,7 @@ import (
 	"go.uber.org/zap"
 )
 
-type queryBuilder[T interface{}] struct {
+type queryBuilder[T any] struct {
 	model   *table.Table
 	session *gocqlx.Session
 	logger  interfaces.ILogger
@@ -28,7 +28,7 @@ func (queryBuilder *queryBuilder[T]) SelectAll() ([]T, error) {
 	return results, nil
 }
 
-func NewQueryBuider[T interface{}](model *table.Table, session *gocqlx.Session, logger interfaces.ILogger) *queryBuilder[T] {
+func NewQueryBuider[T any](model *table.Table, session *gocqlx.Session, logger interfaces.ILogger) *queryBuilder[T] {
 	return &queryBuilder[T]{
 		model,
 		session,
