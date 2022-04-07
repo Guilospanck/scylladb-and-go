@@ -10,7 +10,8 @@ services:
     volumes:
       - "./pkg/infrastructure/database/scylla/scylla.yaml:/etc/scylla/scylla.yaml"
       - "./pkg/infrastructure/database/scylla/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
-      - "./pkg/infrastructure/database/scylla/migration.sql:/migration.sql"
+      - "./pkg/infrastructure/database/migrations/migration.sql:/migration.sql"
+      - "./pkg/infrastructure/database/migrations/migration2.sql:/migration2.sql"
     ports:
       - 9042:9042
     networks:

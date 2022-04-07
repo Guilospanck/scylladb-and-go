@@ -8,7 +8,10 @@ import (
 	"base/pkg/infrastructure/database/models"
 	"base/pkg/infrastructure/logger"
 	"log"
+	"os"
+	"strings"
 
+	"github.com/gocql/gocql"
 	"go.uber.org/zap"
 )
 
@@ -41,15 +44,33 @@ func ShowSelect[T any](querybuilder interfaces.IQueryBuilder[T], logger interfac
 func NewContainer() *Container {
 	logger := logger.NewLogger()
 
+	consistency := gocql.ParseConsistency(os.Getenv("SCYLLA_CONSISTENCY"))
+	hosts := strings.Split(os.Getenv("SCYLLA_HOSTS"), ",")
+	keyspace := "catalog"
+
+	mutantDataConnection := database.NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
+
+	keyspace = "tracking"
+	trackingDataConnection := database.NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
+
 	/* Database connection */
-	session, err := database.GetConnection(logger)
+	mutantSession, err := database.GetConnection(mutantDataConnection, logger)
 	if err != nil {
 		panic(err)
 	}
-	defer session.Close()
+	defer mutantSession.Close()
 
-	model := models.NewMutantDataTable().Table
-	querybuilder := database.NewQueryBuider[entities.MutantData](model, session, logger)
+	trackingSession, err := database.GetConnection(trackingDataConnection, logger)
+	if err != nil {
+		panic(err)
+	}
+	defer trackingSession.Close()
+
+	mutantModel := models.NewMutantDataTable().Table
+	mutantQuerybuilder := database.NewQueryBuider[entities.MutantDataEntity](mutantModel, mutantSession, logger)
+
+	trackingModel := models.NewTrackingDataTable().Table
+	trackingQuerybuilder := database.NewQueryBuider[entities.TrackingDataEntity](trackingModel, trackingSession, logger)
 
 	/* Insert */
 	// querybuilder.Insert(&newData)
@@ -58,14 +79,15 @@ func NewContainer() *Container {
 	// querybuilder.Delete(&dataToBeDeleted)
 
 	/* Select */
-	// dataToBeSearched := entities.MutantData{
+	// dataToBeSearched := entities.MutantDataEntity{
 	// 	FirstName: "Bob",
 	// 	LastName:  "Loblaw",
 	// }
-	// ShowSelect[entities.MutantData](querybuilder, logger, &dataToBeSearched)
+	// ShowSelect[entities.MutantDataEntity](querybuilder, logger, &dataToBeSearched)
 
 	/* Select All */
-	ShowValuesSelectAll[entities.MutantData](querybuilder, logger)
+	ShowValuesSelectAll[entities.MutantDataEntity](mutantQuerybuilder, logger)
+	ShowValuesSelectAll[entities.TrackingDataEntity](trackingQuerybuilder, logger)
 
 	return &Container{
 		logger,

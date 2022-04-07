@@ -3,8 +3,6 @@ package database
 import (
 	"base/pkg/application/interfaces"
 	_ "base/pkg/infrastructure/environments"
-	"os"
-	"strings"
 	"time"
 
 	"github.com/gocql/gocql"
@@ -55,12 +53,7 @@ func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, logge
 	}
 }
 
-func GetConnection(logger interfaces.ILogger) (*gocqlx.Session, error) {
-	consistency := gocql.ParseConsistency(os.Getenv("SCYLLA_CONSISTENCY"))
-	keyspace := os.Getenv("SCYLLA_KEYSPACE")
-	hosts := strings.Split(os.Getenv("SCYLLA_HOSTS"), ",")
-
-	connection := NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
+func GetConnection(connection *scyllaDBConnection, logger interfaces.ILogger) (*gocqlx.Session, error) {
 	cluster := connection.createCluster()
 	return connection.createSession(cluster)
 }
