@@ -6,10 +6,12 @@ import (
 	"base/pkg/infrastructure/database"
 	"base/pkg/infrastructure/database/entities"
 	"base/pkg/infrastructure/database/models"
+	_ "base/pkg/infrastructure/environments"
 	"base/pkg/infrastructure/logger"
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gocql/gocql"
 	"go.uber.org/zap"
@@ -44,50 +46,48 @@ func ShowSelect[T any](querybuilder interfaces.IQueryBuilder[T], logger interfac
 func NewContainer() *Container {
 	logger := logger.NewLogger()
 
+	/* Database connection */
 	consistency := gocql.ParseConsistency(os.Getenv("SCYLLA_CONSISTENCY"))
 	hosts := strings.Split(os.Getenv("SCYLLA_HOSTS"), ",")
-	keyspace := "catalog"
+	keyspace := "tracking"
 
-	mutantDataConnection := database.NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
+	dbDataConnection := database.NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
 
-	keyspace = "tracking"
-	trackingDataConnection := database.NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
-
-	/* Database connection */
-	mutantSession, err := database.GetConnection(mutantDataConnection, logger)
+	session, err := database.GetConnection(dbDataConnection, logger)
 	if err != nil {
 		panic(err)
 	}
-	defer mutantSession.Close()
-
-	trackingSession, err := database.GetConnection(trackingDataConnection, logger)
-	if err != nil {
-		panic(err)
-	}
-	defer trackingSession.Close()
-
-	mutantModel := models.NewMutantDataTable().Table
-	mutantQuerybuilder := database.NewQueryBuider[entities.MutantDataEntity](mutantModel, mutantSession, logger)
+	defer session.Close()
 
 	trackingModel := models.NewTrackingDataTable().Table
-	trackingQuerybuilder := database.NewQueryBuider[entities.TrackingDataEntity](trackingModel, trackingSession, logger)
+	querybuilder := database.NewQueryBuider[entities.TrackingDataEntity](trackingModel, session, logger)
 
 	/* Insert */
 	// querybuilder.Insert(&newData)
 
 	/* Delete */
-	// querybuilder.Delete(&dataToBeDeleted)
+	timeLayout := "2006-01-02 15:04:05 -0700 MST"
+	timestamp, err := time.Parse(timeLayout, "2017-11-11 11:05:00 +0000 UTC")
+	if err != nil {
+		logger.Info(err.Error())
+	}
+
+	dataToBeDeleted := entities.TrackingDataEntity{
+		FirstName: "Bob",
+		LastName:  "Loblaw",
+		Timestamp: timestamp,
+	}
+	querybuilder.Delete(&dataToBeDeleted)
 
 	/* Select */
-	// dataToBeSearched := entities.MutantDataEntity{
+	// dataToBeSearched := entities.TrackingDataEntity{
 	// 	FirstName: "Bob",
 	// 	LastName:  "Loblaw",
 	// }
-	// ShowSelect[entities.MutantDataEntity](querybuilder, logger, &dataToBeSearched)
+	// ShowSelect[entities.TrackingDataEntity](querybuilder, logger, &dataToBeSearched)
 
 	/* Select All */
-	ShowValuesSelectAll[entities.MutantDataEntity](mutantQuerybuilder, logger)
-	ShowValuesSelectAll[entities.TrackingDataEntity](trackingQuerybuilder, logger)
+	// ShowValuesSelectAll[entities.TrackingDataEntity](querybuilder, logger)
 
 	return &Container{
 		logger,

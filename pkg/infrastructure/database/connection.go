@@ -2,7 +2,6 @@ package database
 
 import (
 	"base/pkg/application/interfaces"
-	_ "base/pkg/infrastructure/environments"
 	"time"
 
 	"github.com/gocql/gocql"
