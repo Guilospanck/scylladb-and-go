@@ -2,16 +2,39 @@
 version: '3'
 
 services:
-  some-scylla:
+  scylla-node1:
     image: scylladb/scylla
-    container_name: some-scylla
+    restart: always
+    container_name: scylla-node1
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./pkg/infrastructure/database/scylla/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "./pkg/infrastructure/database/scylla/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+    networks:
+      web:
 
-  some-scylla2:
+  scylla-node2:
     image: scylladb/scylla
-    container_name: some-scylla2
-    command: --seeds=some-scylla
+    restart: always
+    container_name: scylla-node2
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./pkg/infrastructure/database/scylla/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "./pkg/infrastructure/database/scylla/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+    networks:
+      web:
 
-  some-scylla3:
+  scylla-node3:
     image: scylladb/scylla
-    container_name: some-scylla3
-    command: --seeds=some-scylla
+    restart: always
+    container_name: scylla-node3
+    command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
+    volumes:
+      - "./pkg/infrastructure/database/scylla/scylla.yaml:/etc/scylla/scylla.yaml"
+      - "./pkg/infrastructure/database/scylla/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+    networks:
+      web:
+
+networks:
+  web:
+    driver: bridge

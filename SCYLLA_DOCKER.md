@@ -35,13 +35,26 @@ restart: always
 command: --seeds=scylla-node1,scylla-node2 --smp 1 --memory 750M --overprovisioned 1 --api-address 0.0.0.0
 ```
 
-### More about `seed`
+### More about [`seed`](https://docs.scylladb.com/kb/seed-nodes/)
 A Scylla seed node is a regular Scylla node with two extra roles:
 - It allows nodes to discover the cluster ring topology on startup (when joining the cluster).
   - What are the IPs of the nodes in the cluster?
   - Which token ranges are available?
   - Which nodes will own which tokens when a new node joins the cluster?
 - It assists with `gossip` convergence. Gossiping with other nodes ensures that any update to the cluster is propagated across the cluster. This includes alerting when a node goes dowm, comes back or is removed from the cluster.
+
+<b>Tips for creating Scylla seed nodes:</b>
+- The first node in a new cluster needs to be a seed node.
+- Ensure that all nodes in the cluster have the same seed nodes listed in each node’s scylla.yaml.
+- To maintain resiliency of the cluster, it is recommended to have more than one seed node in the cluster.
+- If you have more than one seed in a DC with multiple racks (or availability zones), make sure to put your seeds in different racks.
+- You must have at least one node that is not a seed node. You cannot create a cluster where all nodes are seed nodes.
+- You should have more than one seed node.
+
+<b>How Many Seed Nodes Do I Need?</b>
+Use the following guidelines:
+- If your DC has `more` than 6 nodes in it, you need 3 seed nodes per DC.
+- If your DC has `less` than 6 nodes in it, you need 2 seed nodes per DC.
 -----
 
 ## Checking server with Nodetool
@@ -123,4 +136,42 @@ To map it into the docker-compose file, do:
 # {host}:{container}
 volumes:
   - "./cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+```
+
+### Data file
+You can create a data file to create your keyspaces, table, inserts and so on, in order to make the process easier when getting containers up.
+
+> Remember that under REPLICATION {} you must pass the Datacenter name that you defined either in your .yaml file or using cassandra-rackdc.properties file.
+
+Firstly, create a simple .txt file containing your .CQL commands. Example:
+```txt
+// initialConfig.txt
+
+CREATE KEYSPACE catalog WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy','DC1' : 3};
+
+USE catalog;
+
+CREATE TABLE mutant_data (
+first_name text,
+last_name text, 
+address text, 
+picture_location text,
+PRIMARY KEY((first_name, last_name))
+);
+
+INSERT INTO mutant_data ("first_name","last_name","address","picture_location") VALUES ('Bob','Loblaw','1313 Mockingbird Lane', 'http://www.facebook.com/bobloblaw') ;
+INSERT INTO mutant_data ("first_name","last_name","address","picture_location") VALUES ('Bob','Zemuda','1202 Coffman Lane', 'http://www.facebook.com/bzemuda') ;
+INSERT INTO mutant_data ("first_name","last_name","address","picture_location") VALUES ('Jim','Jeffries','1211 Hollywood Lane', 'http://www.facebook.com/jeffries') ;
+
+```
+
+Then you can map it into your docker-compose file as a volume:
+```yaml
+volumes:
+  - "./initialConfig.txt:/initialConfig.txt"
+```
+
+And, once your container is running, you can pass that into your cqlsh:
+```bash
+docker exec scylla-node1 cqlsh -f /initialConfig.txt
 ```
