@@ -27,11 +27,7 @@ func NewContainer() *Container {
 	defer session.Close()
 
 	model := models.NewMutantDataTable().Table
-	querybuilder := database.QueryBuilder[entities.MutantData]{
-		Model:   model,
-		Session: session,
-		Logger:  logger,
-	}
+	querybuilder := database.NewQueryBuider[entities.MutantData](model, session, logger)
 
 	results, err := querybuilder.SelectAll()
 	if err != nil {
