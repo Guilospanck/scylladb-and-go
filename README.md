@@ -33,7 +33,7 @@ sudo docker-compose -f docker-compose.yml up -d --build
 # docker compose v2
 sudo docker compose -f docker-compose.yml up -d --build
 ```
-After some time you'll be able to have a Scylla cluster up and running. To verify that:
+After some time (may take really some time, like 5min total) you'll be able to have a Scylla cluster up and running. To verify that:
 ```bash
 sudo docker exec -it scylla-node1 nodetool status
 ```

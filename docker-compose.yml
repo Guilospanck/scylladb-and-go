@@ -10,6 +10,7 @@ services:
     volumes:
       - "./pkg/infrastructure/database/scylla/scylla.yaml:/etc/scylla/scylla.yaml"
       - "./pkg/infrastructure/database/scylla/cassandra-rackdc.properties:/etc/scylla/cassandra-rackdc.properties"
+      - "./pkg/infrastructure/database/scylla/migration.sql:/migration.sql"
     networks:
       web:
 
