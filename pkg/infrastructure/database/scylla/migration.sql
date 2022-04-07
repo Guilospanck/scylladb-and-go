@@ -1,4 +1,4 @@
-CREATE KEYSPACE catalog WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'DC1' : 3};
+CREATE KEYSPACE IF NOT EXISTS catalog WITH REPLICATION = { 'class' : 'NetworkTopologyStrategy', 'DC1' : 3};
 
 USE catalog;
 

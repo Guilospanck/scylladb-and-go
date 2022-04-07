@@ -5,8 +5,7 @@ import (
 )
 
 func Execute() error {
-	container := NewContainer()
-	println(container)
+	NewContainer()
 
 	return nil
 }

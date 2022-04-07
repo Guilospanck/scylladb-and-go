@@ -8,11 +8,9 @@ import (
 	"time"
 
 	"github.com/gocql/gocql"
+	"github.com/scylladb/gocqlx/v2"
 	"go.uber.org/zap"
 )
-
-var session *gocql.Session
-var cluster *gocql.ClusterConfig
 
 type scyllaDBConnection struct {
 	consistency gocql.Consistency
@@ -28,34 +26,24 @@ func (conn *scyllaDBConnection) createCluster() *gocql.ClusterConfig {
 		NumRetries: 5,
 	}
 
-	clusterCreated := gocql.NewCluster(conn.hosts...)
-	clusterCreated.Consistency = conn.consistency
-	clusterCreated.Keyspace = conn.keyspace
-	clusterCreated.Timeout = 5 * time.Second
-	clusterCreated.RetryPolicy = retryPolicy
-	clusterCreated.PoolConfig.HostSelectionPolicy = gocql.TokenAwareHostPolicy(gocql.RoundRobinHostPolicy())
+	cluster := gocql.NewCluster(conn.hosts...)
+	cluster.Consistency = conn.consistency
+	cluster.Keyspace = conn.keyspace
+	cluster.Timeout = 5 * time.Second
+	cluster.RetryPolicy = retryPolicy
+	cluster.PoolConfig.HostSelectionPolicy = gocql.TokenAwareHostPolicy(gocql.RoundRobinHostPolicy())
 
-	cluster = clusterCreated
-
-	return clusterCreated
+	return cluster
 }
 
-func (conn *scyllaDBConnection) createSession() (*gocql.Session, error) {
-	if session != nil {
-		return session, nil
-	}
-
-	if cluster != nil {
-		cluster = conn.createCluster()
-	}
-
-	sessionCreated, err := cluster.CreateSession()
+func (conn *scyllaDBConnection) createSession(cluster *gocql.ClusterConfig) (*gocqlx.Session, error) {
+	session, err := gocqlx.WrapSession(cluster.CreateSession())
 	if err != nil {
 		conn.logger.Error("An error occurred while creating DB session: ", zap.Error(err))
 		return nil, err
 	}
-	session = sessionCreated
-	return sessionCreated, nil
+
+	return &session, nil
 }
 
 func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, logger interfaces.ILogger, hosts ...string) *scyllaDBConnection {
@@ -67,11 +55,12 @@ func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, logge
 	}
 }
 
-func GetConnection(logger interfaces.ILogger) (*gocql.Session, error) {
+func GetConnection(logger interfaces.ILogger) (*gocqlx.Session, error) {
 	consistency := gocql.ParseConsistency(os.Getenv("SCYLLA_CONSISTENCY"))
 	keyspace := os.Getenv("SCYLLA_KEYSPACE")
 	hosts := strings.Split(os.Getenv("SCYLLA_HOSTS"), ",")
 
 	connection := NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
-	return connection.createSession()
+	cluster := connection.createCluster()
+	return connection.createSession(cluster)
 }
