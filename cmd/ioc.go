@@ -4,10 +4,11 @@ package cmd
 import (
 	"base/pkg/application/interfaces"
 	"base/pkg/infrastructure/database"
+	"base/pkg/infrastructure/database/entities"
+	"base/pkg/infrastructure/database/models"
 	"base/pkg/infrastructure/logger"
 	"log"
 
-	"github.com/scylladb/gocqlx/v2/table"
 	"go.uber.org/zap"
 )
 
@@ -24,30 +25,17 @@ func NewContainer() *Container {
 		panic(err)
 	}
 	defer session.Close()
-	logger.Info("DB Session created!")
 
-	mutantDataMetadata := table.Metadata{
-		Name:    "mutant_data",
-		Columns: []string{"first_name", "last_name", "address", "picture_location"},
-		PartKey: []string{"first_name", "last_name"},
+	model := models.NewMutantDataTable().Table
+	querybuilder := database.QueryBuilder[entities.MutantData]{
+		Model:   model,
+		Session: session,
+		Logger:  logger,
 	}
 
-	mutantDataTable := table.New(mutantDataMetadata)
-
-	type MutantData struct {
-		FirstName       string
-		LastName        string
-		Address         string
-		PictureLocation string
-	}
-
-	selectStatement, statementNames := mutantDataTable.SelectAll()
-	selectQuery := session.Query(selectStatement, statementNames)
-
-	var results []MutantData
-	err = selectQuery.SelectRelease(&results)
+	results, err := querybuilder.SelectAll()
 	if err != nil {
-		logger.Error("Select() error", zap.Error(err))
+		logger.Error("SelectAll() error", zap.Error(err))
 	}
 
 	for _, value := range results {
