@@ -40,14 +40,18 @@ func NewContainer() *Container {
 	model := models.NewMutantDataTable().Table
 	querybuilder := database.NewQueryBuider[entities.MutantData](model, session, logger)
 
-	/* Insert */
-	// newData := entities.MutantData{
+	// dataToBeDeleted := entities.MutantData{
 	// 	FirstName:       "Guilherme",
 	// 	LastName:        "Rodrigues",
 	// 	Address:         "R Github",
 	// 	PictureLocation: "Github",
 	// }
+
+	/* Insert */
 	// querybuilder.Insert(&newData)
+
+	/* Delete */
+	// querybuilder.Delete(&dataToBeDeleted)
 
 	ShowValuesSelectAll[entities.MutantData](querybuilder, logger)
 

@@ -28,6 +28,20 @@ func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
 	return nil
 }
 
+func (queryBuilder *queryBuilder[T]) Delete(dataToBeDeleted *T) error {
+	deleteStatement, deleteNames := queryBuilder.model.Delete()
+
+	deleteQuery := queryBuilder.session.Query(deleteStatement, deleteNames)
+
+	err := deleteQuery.BindStruct(dataToBeDeleted).ExecRelease()
+	if err != nil {
+		queryBuilder.logger.Error("Delete error: ", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
 func (queryBuilder *queryBuilder[T]) SelectAll() ([]T, error) {
 	selectStatement, statementNames := queryBuilder.model.SelectAll()
 	selectQuery := queryBuilder.session.Query(selectStatement, statementNames)
