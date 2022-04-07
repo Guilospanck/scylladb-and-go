@@ -16,7 +16,6 @@ type queryBuilder[T any] struct {
 
 func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
 	insertStatement, insertNames := queryBuilder.model.Insert()
-
 	insertQuery := queryBuilder.session.Query(insertStatement, insertNames)
 
 	err := insertQuery.BindStruct(insertData).ExecRelease()
@@ -30,7 +29,6 @@ func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
 
 func (queryBuilder *queryBuilder[T]) Delete(dataToBeDeleted *T) error {
 	deleteStatement, deleteNames := queryBuilder.model.Delete()
-
 	deleteQuery := queryBuilder.session.Query(deleteStatement, deleteNames)
 
 	err := deleteQuery.BindStruct(dataToBeDeleted).ExecRelease()
@@ -42,12 +40,26 @@ func (queryBuilder *queryBuilder[T]) Delete(dataToBeDeleted *T) error {
 	return nil
 }
 
-func (queryBuilder *queryBuilder[T]) SelectAll() ([]T, error) {
-	selectStatement, statementNames := queryBuilder.model.SelectAll()
-	selectQuery := queryBuilder.session.Query(selectStatement, statementNames)
+func (queryBuilder *queryBuilder[T]) Select(dataToGet *T) ([]T, error) {
+	selectStatement, selectNames := queryBuilder.model.Select()
+	selectQuery := queryBuilder.session.Query(selectStatement, selectNames)
 
 	var results []T
-	err := selectQuery.SelectRelease(&results)
+	err := selectQuery.BindStruct(dataToGet).SelectRelease(&results)
+	if err != nil {
+		queryBuilder.logger.Error("Select-BindStruct-SelectRelease() error", zap.Error(err))
+		return nil, err
+	}
+
+	return results, nil
+}
+
+func (queryBuilder *queryBuilder[T]) SelectAll() ([]T, error) {
+	selectAllStatement, selectAllNames := queryBuilder.model.SelectAll()
+	selectAllQuery := queryBuilder.session.Query(selectAllStatement, selectAllNames)
+
+	var results []T
+	err := selectAllQuery.SelectRelease(&results)
 	if err != nil {
 		queryBuilder.logger.Error("SelectAll-SelectRelease() error", zap.Error(err))
 		return nil, err

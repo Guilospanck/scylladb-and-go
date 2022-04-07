@@ -27,6 +27,17 @@ func ShowValuesSelectAll[T any](querybuilder interfaces.IQueryBuilder[T], logger
 	}
 }
 
+func ShowSelect[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger, dataToBeSearched *T) {
+	results, err := querybuilder.Select(dataToBeSearched)
+	if err != nil {
+		logger.Error("Select() error", zap.Error(err))
+	}
+
+	for _, value := range results {
+		log.Printf("%+v", value)
+	}
+}
+
 func NewContainer() *Container {
 	logger := logger.NewLogger()
 
@@ -40,19 +51,20 @@ func NewContainer() *Container {
 	model := models.NewMutantDataTable().Table
 	querybuilder := database.NewQueryBuider[entities.MutantData](model, session, logger)
 
-	// dataToBeDeleted := entities.MutantData{
-	// 	FirstName:       "Guilherme",
-	// 	LastName:        "Rodrigues",
-	// 	Address:         "R Github",
-	// 	PictureLocation: "Github",
-	// }
-
 	/* Insert */
 	// querybuilder.Insert(&newData)
 
 	/* Delete */
 	// querybuilder.Delete(&dataToBeDeleted)
 
+	/* Select */
+	// dataToBeSearched := entities.MutantData{
+	// 	FirstName: "Bob",
+	// 	LastName:  "Loblaw",
+	// }
+	// ShowSelect[entities.MutantData](querybuilder, logger, &dataToBeSearched)
+
+	/* Select All */
 	ShowValuesSelectAll[entities.MutantData](querybuilder, logger)
 
 	return &Container{
