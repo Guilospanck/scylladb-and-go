@@ -14,10 +14,12 @@ type Container struct {
 func NewContainer() *Container {
 	logger := logger.NewLogger()
 
-	_, err := database.GetConnection(logger)
+	/* Database connection */
+	session, err := database.GetConnection(logger)
 	if err != nil {
 		panic(err)
 	}
+	defer session.Close()
 	logger.Info("DB Session created!")
 
 	return &Container{
