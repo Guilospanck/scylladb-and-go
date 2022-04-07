@@ -2,6 +2,7 @@ package database
 
 import (
 	"base/pkg/application/interfaces"
+	"fmt"
 
 	"github.com/scylladb/gocqlx/v2"
 	"github.com/scylladb/gocqlx/v2/table"
@@ -36,6 +37,29 @@ func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
 func (queryBuilder *queryBuilder[T]) Delete(dataToBeDeleted *T) error {
 	deleteStatement, deleteNames := queryBuilder.model.Delete()
 	deleteQuery := queryBuilder.session.Query(deleteStatement, deleteNames)
+
+	err := deleteQuery.BindStruct(dataToBeDeleted).ExecRelease()
+	if err != nil {
+		queryBuilder.logger.Error("Delete error: ", zap.Error(err))
+		return err
+	}
+
+	return nil
+}
+
+func (queryBuilder *queryBuilder[T]) DeleteAllFromPartitioningKey(dataToBeDeleted *T) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE ", queryBuilder.model.Metadata().Name)
+
+	for index, value := range queryBuilder.model.Metadata().PartKey {
+		if index == 0 {
+			query += fmt.Sprintf("%s=? ", value)
+			continue
+		}
+
+		query += fmt.Sprintf("AND %s=?", value)
+	}
+
+	deleteQuery := queryBuilder.session.Query(query, queryBuilder.model.Metadata().PartKey)
 
 	err := deleteQuery.BindStruct(dataToBeDeleted).ExecRelease()
 	if err != nil {

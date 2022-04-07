@@ -57,6 +57,32 @@ sudo docker-compose kill
 sudo docker-compose rm -f
 sudo docker-compose -f docker-compose.yml up -d --build
 ```
+---
+
+## How to use the application
+Once you have all the above section setted up, follow this one.
+
+### Queries
+Using `gocqlx` to create our queries we have the following:
+```go
+type T any
+
+type IQueryBuilder[t T] interface {
+	Insert(insertData *t) error
+	Delete(dataToBeDeleted *t) error
+	DeleteAllFromPartitioningKey(dataToBeDeleted *t) error
+	Select(dataToGet *t) ([]t, error)
+	Get(dataToGet *t) ([]t, error)
+	SelectAll() ([]t, error)
+}
+```
+
+- `Insert`: will insert a new item into the database
+- `Delete`: will delete an item based on the Primary Key (Partitioning Key + Clustering Key)
+- `DeleteAllFromPartitioningKey`: will delete an item based on the Partitioning Key
+- `Select`: will return data based on the Partitioning Key
+- `Get`: will return data based on the Primary Key (PK + CK)
+- `SelectAll`: will return all data from table
 
 
 [Docker]: (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
