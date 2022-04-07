@@ -1,5 +1,7 @@
 package interfaces
 
-type IQueryBuilder interface {
-	SelectAll() (any, error)
+type T any
+
+type IQueryBuilder[t T] interface {
+	SelectAll() ([]t, error)
 }
