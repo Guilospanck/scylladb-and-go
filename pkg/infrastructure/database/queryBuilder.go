@@ -14,6 +14,9 @@ type queryBuilder[T any] struct {
 	logger  interfaces.ILogger
 }
 
+/* It'll insert data into table.
+*  INSERT INTO table VALUES {};
+ */
 func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
 	insertStatement, insertNames := queryBuilder.model.Insert()
 	insertQuery := queryBuilder.session.Query(insertStatement, insertNames)
@@ -27,6 +30,9 @@ func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
 	return nil
 }
 
+/* It'll delete from table based on the Primary Key (Partition Key + Clustering Key (if exists))
+*  DELETE FROM table WHERE PK = {};
+ */
 func (queryBuilder *queryBuilder[T]) Delete(dataToBeDeleted *T) error {
 	deleteStatement, deleteNames := queryBuilder.model.Delete()
 	deleteQuery := queryBuilder.session.Query(deleteStatement, deleteNames)
@@ -40,6 +46,9 @@ func (queryBuilder *queryBuilder[T]) Delete(dataToBeDeleted *T) error {
 	return nil
 }
 
+/* It'll return data based on the Partition Key
+*  SELECT * FROM table WHERE {partition key = {}};
+ */
 func (queryBuilder *queryBuilder[T]) Select(dataToGet *T) ([]T, error) {
 	selectStatement, selectNames := queryBuilder.model.Select()
 	selectQuery := queryBuilder.session.Query(selectStatement, selectNames)
@@ -54,6 +63,9 @@ func (queryBuilder *queryBuilder[T]) Select(dataToGet *T) ([]T, error) {
 	return results, nil
 }
 
+/* It'll everything from table.
+*  SELECT * FROM table;
+ */
 func (queryBuilder *queryBuilder[T]) SelectAll() ([]T, error) {
 	selectAllStatement, selectAllNames := queryBuilder.model.SelectAll()
 	selectAllQuery := queryBuilder.session.Query(selectAllStatement, selectAllNames)
