@@ -59,7 +59,6 @@ sudo docker-compose -f docker-compose.yml up -d --build
 ```
 
 
-
 [Docker]: (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
 [Docker Compose]: (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
 [Golang]: (https://go.dev/dl/)
