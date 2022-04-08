@@ -8,6 +8,7 @@ import (
 	"base/pkg/infrastructure/database/models"
 	_ "base/pkg/infrastructure/environments"
 	"base/pkg/infrastructure/logger"
+	"base/pkg/infrastructure/repositories"
 	"log"
 	"os"
 	"strings"
@@ -18,6 +19,8 @@ import (
 
 type Container struct {
 	logger interfaces.ILogger
+
+	trackingDataRepo interfaces.ITrackingDataRepository[entities.TrackingDataEntity]
 }
 
 func ShowValuesSelectAll[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger) {
@@ -43,14 +46,12 @@ func ShowSelect[T any](querybuilder interfaces.IQueryBuilder[T], logger interfac
 }
 
 func ShowGet[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger, dataToBeSearched *T) {
-	results, err := querybuilder.Get(dataToBeSearched)
+	result, err := querybuilder.Get(dataToBeSearched)
 	if err != nil {
 		logger.Error("Get() error", zap.Error(err))
 	}
 
-	for _, value := range results {
-		log.Printf("%+v", value)
-	}
+	log.Printf("%+v", result)
 }
 
 func NewContainer() *Container {
@@ -62,17 +63,21 @@ func NewContainer() *Container {
 	keyspace := "tracking"
 
 	dbDataConnection := database.NewScyllaDBConnection(consistency, keyspace, logger, hosts...)
-
 	session, err := database.GetConnection(dbDataConnection, logger)
 	if err != nil {
 		panic(err)
 	}
 	defer session.Close()
 
+	/* Query Builder */
 	trackingModel := models.NewTrackingDataTable().Table
 	querybuilder := database.NewQueryBuider[entities.TrackingDataEntity](trackingModel, session, logger)
 
+	/* Repositories */
+	trackingDataRepo := repositories.NewTrackingDataRepository[entities.TrackingDataEntity](querybuilder, logger)
+
 	return &Container{
 		logger,
+		trackingDataRepo,
 	}
 }
