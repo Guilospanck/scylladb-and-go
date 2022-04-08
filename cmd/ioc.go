@@ -20,7 +20,7 @@ import (
 type Container struct {
 	logger interfaces.ILogger
 
-	trackingDataRepo interfaces.ITrackingDataRepository[entities.TrackingDataEntity]
+	trackingDataRepo interfaces.ITrackingDataRepository
 }
 
 func ShowValuesSelectAll[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger) {
@@ -74,7 +74,9 @@ func NewContainer() *Container {
 	querybuilder := database.NewQueryBuider[entities.TrackingDataEntity](trackingModel, session, logger)
 
 	/* Repositories */
-	trackingDataRepo := repositories.NewTrackingDataRepository[entities.TrackingDataEntity](querybuilder, logger)
+	trackingDataRepo := repositories.NewTrackingDataRepository(querybuilder, logger)
+
+	/* Use cases */
 
 	return &Container{
 		logger,

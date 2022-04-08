@@ -7,12 +7,12 @@ import (
 	"go.uber.org/zap"
 )
 
-type trackingDataRepository[T entities.TrackingDataEntity] struct {
-	queryBuilder interfaces.IQueryBuilder[T]
+type trackingDataRepository struct {
+	queryBuilder interfaces.IQueryBuilder[entities.TrackingDataEntity]
 	logger       interfaces.ILogger
 }
 
-func (repo *trackingDataRepository[T]) AddTrackingData(trackingData *T) (*T, error) {
+func (repo *trackingDataRepository) AddTrackingData(trackingData *entities.TrackingDataEntity) (*entities.TrackingDataEntity, error) {
 	err := repo.queryBuilder.Insert(trackingData)
 	if err != nil {
 		repo.logger.Error("Could not add tracking data. Error: ", zap.Error(err))
@@ -22,7 +22,7 @@ func (repo *trackingDataRepository[T]) AddTrackingData(trackingData *T) (*T, err
 	return trackingData, nil
 }
 
-func (repo *trackingDataRepository[T]) DeleteTrackingDataByPrimaryKey(trackingData *T) error {
+func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData *entities.TrackingDataEntity) error {
 	err := repo.queryBuilder.Delete(trackingData)
 	if err != nil {
 		repo.logger.Error("Could not delete tracking data using primary key. Error: ", zap.Error(err))
@@ -32,7 +32,7 @@ func (repo *trackingDataRepository[T]) DeleteTrackingDataByPrimaryKey(trackingDa
 	return nil
 }
 
-func (repo *trackingDataRepository[T]) DeleteTrackingDataByPartitionKey(trackingData *T) error {
+func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingData *entities.TrackingDataEntity) error {
 	err := repo.queryBuilder.DeleteAllFromPartitioningKey(trackingData)
 	if err != nil {
 		repo.logger.Error("Could not delete tracking data using partition key. Error: ", zap.Error(err))
@@ -42,7 +42,7 @@ func (repo *trackingDataRepository[T]) DeleteTrackingDataByPartitionKey(tracking
 	return nil
 }
 
-func (repo *trackingDataRepository[T]) FindTrackingDataByPrimaryKey(trackingData *T) (*T, error) {
+func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(trackingData *entities.TrackingDataEntity) (*entities.TrackingDataEntity, error) {
 	result, err := repo.queryBuilder.Get(trackingData)
 	if err != nil {
 		repo.logger.Error("Could not find tracking data by primary key. Error: ", zap.Error(err))
@@ -52,7 +52,7 @@ func (repo *trackingDataRepository[T]) FindTrackingDataByPrimaryKey(trackingData
 	return result, err
 }
 
-func (repo *trackingDataRepository[T]) FindAllTrackingDataByPartitionKey(trackingData *T) ([]T, error) {
+func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(trackingData *entities.TrackingDataEntity) ([]entities.TrackingDataEntity, error) {
 	results, err := repo.queryBuilder.Select(trackingData)
 	if err != nil {
 		repo.logger.Error("Could not find all tracking data by partition key. Error: ", zap.Error(err))
@@ -62,7 +62,7 @@ func (repo *trackingDataRepository[T]) FindAllTrackingDataByPartitionKey(trackin
 	return results, nil
 }
 
-func (repo *trackingDataRepository[T]) FindAllTrackingData() ([]T, error) {
+func (repo *trackingDataRepository) FindAllTrackingData() ([]entities.TrackingDataEntity, error) {
 	results, err := repo.queryBuilder.SelectAll()
 	if err != nil {
 		repo.logger.Error("Could not find all tracking data. Error: ", zap.Error(err))
@@ -72,9 +72,8 @@ func (repo *trackingDataRepository[T]) FindAllTrackingData() ([]T, error) {
 	return results, nil
 }
 
-func NewTrackingDataRepository[T entities.TrackingDataEntity](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger) *trackingDataRepository[T] {
-
-	return &trackingDataRepository[T]{
+func NewTrackingDataRepository(querybuilder interfaces.IQueryBuilder[entities.TrackingDataEntity], logger interfaces.ILogger) *trackingDataRepository {
+	return &trackingDataRepository{
 		queryBuilder: querybuilder,
 		logger:       logger,
 	}
