@@ -3,25 +3,25 @@ package cmd
 
 import (
 	"base/pkg/application/interfaces"
+	"base/pkg/application/usecases"
+	"base/pkg/domain/dtos"
 	"base/pkg/infrastructure/database"
 	"base/pkg/infrastructure/database/entities"
 	"base/pkg/infrastructure/database/models"
 	_ "base/pkg/infrastructure/environments"
 	"base/pkg/infrastructure/logger"
 	"base/pkg/infrastructure/repositories"
+	"fmt"
 	"log"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gocql/gocql"
 	"go.uber.org/zap"
 )
 
-type Container struct {
-	logger interfaces.ILogger
-
-	trackingDataRepo interfaces.ITrackingDataRepository
-}
+type Container struct{}
 
 func ShowValuesSelectAll[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger) {
 	results, err := querybuilder.SelectAll()
@@ -77,9 +77,24 @@ func NewContainer() *Container {
 	trackingDataRepo := repositories.NewTrackingDataRepository(querybuilder, logger)
 
 	/* Use cases */
+	createTrackingDataUsecase := usecases.NewCreateTrackingDataUsecase(trackingDataRepo)
 
-	return &Container{
-		logger,
-		trackingDataRepo,
+	/* Test usecase creation */
+	dataToInsert := dtos.TrackingDataDTO{
+		FirstName:       "Guilherme",
+		LastName:        "Rodrigues",
+		Timestamp:       time.Now(),
+		Location:        "Brazil",
+		Speed:           50.5,
+		Heat:            40,
+		TelepathyPowers: 10,
 	}
+
+	result, err := createTrackingDataUsecase.Perform(dataToInsert)
+	if err != nil {
+		logger.Error("Error on tracking data creation: ", zap.Error(err))
+	}
+	fmt.Printf("%+v", result)
+
+	return &Container{}
 }

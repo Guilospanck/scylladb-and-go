@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"base/pkg/application/interfaces"
+	"base/pkg/domain/dtos"
 	"base/pkg/infrastructure/database/entities"
 
 	"go.uber.org/zap"
@@ -12,8 +13,8 @@ type trackingDataRepository struct {
 	logger       interfaces.ILogger
 }
 
-func (repo *trackingDataRepository) AddTrackingData(trackingData *entities.TrackingDataEntity) (*entities.TrackingDataEntity, error) {
-	err := repo.queryBuilder.Insert(trackingData)
+func (repo *trackingDataRepository) AddTrackingData(trackingData *dtos.TrackingDataDTO) (*dtos.TrackingDataDTO, error) {
+	err := repo.queryBuilder.Insert(trackingDataDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error("Could not add tracking data. Error: ", zap.Error(err))
 		return nil, err
@@ -70,6 +71,20 @@ func (repo *trackingDataRepository) FindAllTrackingData() ([]entities.TrackingDa
 	}
 
 	return results, nil
+}
+
+func trackingDataDTOToEntity(dto *dtos.TrackingDataDTO) *entities.TrackingDataEntity {
+	trackingDataEntity := &entities.TrackingDataEntity{
+		FirstName:       dto.FirstName,
+		LastName:        dto.LastName,
+		Timestamp:       dto.Timestamp,
+		Location:        dto.Location,
+		Speed:           dto.Speed,
+		Heat:            dto.Heat,
+		TelepathyPowers: dto.TelepathyPowers,
+	}
+
+	return trackingDataEntity
 }
 
 func NewTrackingDataRepository(querybuilder interfaces.IQueryBuilder[entities.TrackingDataEntity], logger interfaces.ILogger) *trackingDataRepository {

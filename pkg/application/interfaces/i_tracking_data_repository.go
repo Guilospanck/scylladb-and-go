@@ -1,9 +1,12 @@
 package interfaces
 
-import "base/pkg/infrastructure/database/entities"
+import (
+	"base/pkg/domain/dtos"
+	"base/pkg/infrastructure/database/entities"
+)
 
 type ITrackingDataRepository interface {
-	AddTrackingData(trackingData *entities.TrackingDataEntity) (*entities.TrackingDataEntity, error)
+	AddTrackingData(trackingData *dtos.TrackingDataDTO) (*dtos.TrackingDataDTO, error)
 	DeleteTrackingDataByPrimaryKey(trackingData *entities.TrackingDataEntity) error
 	DeleteTrackingDataByPartitionKey(trackingData *entities.TrackingDataEntity) error
 	FindTrackingDataByPrimaryKey(trackingData *entities.TrackingDataEntity) (*entities.TrackingDataEntity, error)
