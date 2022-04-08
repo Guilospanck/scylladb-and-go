@@ -33,8 +33,8 @@ func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData 
 	return nil
 }
 
-func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingData *entities.TrackingDataEntity) error {
-	err := repo.queryBuilder.DeleteAllFromPartitioningKey(trackingData)
+func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingData *dtos.TrackingDataPartitionKeyDTO) error {
+	err := repo.queryBuilder.DeleteAllFromPartitioningKey(trackingDataPartitionKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error("Could not delete tracking data using partition key. Error: ", zap.Error(err))
 		return err
@@ -43,34 +43,58 @@ func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingDat
 	return nil
 }
 
-func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(trackingData *entities.TrackingDataEntity) (*entities.TrackingDataEntity, error) {
-	result, err := repo.queryBuilder.Get(trackingData)
+func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(trackingData *dtos.TrackingDataPrimaryKeyDTO) (*dtos.TrackingDataDTO, error) {
+	result, err := repo.queryBuilder.Get(trackingDataPrimaryKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error("Could not find tracking data by primary key. Error: ", zap.Error(err))
 		return nil, err
 	}
 
-	return result, err
+	return trackingDataEntityToDTO(result), err
 }
 
-func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(trackingData *entities.TrackingDataEntity) ([]entities.TrackingDataEntity, error) {
-	results, err := repo.queryBuilder.Select(trackingData)
+func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(trackingData *dtos.TrackingDataPartitionKeyDTO) ([]*dtos.TrackingDataDTO, error) {
+	results, err := repo.queryBuilder.Select(trackingDataPartitionKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error("Could not find all tracking data by partition key. Error: ", zap.Error(err))
 		return nil, err
 	}
 
-	return results, nil
+	var arrayOfResults []*dtos.TrackingDataDTO
+
+	for _, value := range results {
+		arrayOfResults = append(arrayOfResults, trackingDataEntityToDTO(&value))
+	}
+
+	return arrayOfResults, nil
 }
 
-func (repo *trackingDataRepository) FindAllTrackingData() ([]entities.TrackingDataEntity, error) {
+func (repo *trackingDataRepository) FindAllTrackingData() ([]*dtos.TrackingDataDTO, error) {
 	results, err := repo.queryBuilder.SelectAll()
 	if err != nil {
 		repo.logger.Error("Could not find all tracking data. Error: ", zap.Error(err))
 		return nil, err
 	}
 
-	return results, nil
+	var arrayOfResults []*dtos.TrackingDataDTO
+
+	for _, value := range results {
+		arrayOfResults = append(arrayOfResults, trackingDataEntityToDTO(&value))
+	}
+
+	return arrayOfResults, nil
+}
+
+func trackingDataEntityToDTO(entity *entities.TrackingDataEntity) *dtos.TrackingDataDTO {
+	return &dtos.TrackingDataDTO{
+		FirstName:       entity.FirstName,
+		LastName:        entity.LastName,
+		Timestamp:       entity.Timestamp,
+		Location:        entity.Location,
+		Speed:           entity.Speed,
+		Heat:            entity.Heat,
+		TelepathyPowers: entity.TelepathyPowers,
+	}
 }
 
 func trackingDataDTOToEntity(dto *dtos.TrackingDataDTO) *entities.TrackingDataEntity {
