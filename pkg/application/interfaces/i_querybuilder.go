@@ -7,6 +7,6 @@ type IQueryBuilder[t T] interface {
 	Delete(dataToBeDeleted *t) error
 	DeleteAllFromPartitioningKey(dataToBeDeleted *t) error
 	Select(dataToGet *t) ([]t, error)
-	Get(dataToGet *t) ([]t, error)
+	Get(dataToGet *t) (*t, error)
 	SelectAll() ([]t, error)
 }
