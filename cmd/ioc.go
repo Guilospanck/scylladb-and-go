@@ -2,20 +2,18 @@
 package cmd
 
 import (
+	mocks "base/__mocks__"
 	"base/pkg/application/interfaces"
 	"base/pkg/application/usecases"
-	"base/pkg/domain/dtos"
 	"base/pkg/infrastructure/database"
 	"base/pkg/infrastructure/database/entities"
 	"base/pkg/infrastructure/database/models"
 	_ "base/pkg/infrastructure/environments"
 	"base/pkg/infrastructure/logger"
 	"base/pkg/infrastructure/repositories"
-	"fmt"
 	"log"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/gocql/gocql"
 	"go.uber.org/zap"
@@ -77,24 +75,12 @@ func NewContainer() *Container {
 	trackingDataRepo := repositories.NewTrackingDataRepository(querybuilder, logger)
 
 	/* Use cases */
-	createTrackingDataUsecase := usecases.NewCreateTrackingDataUsecase(trackingDataRepo)
+	// createTrackingDataUsecase := usecases.NewCreateTrackingDataUsecase(trackingDataRepo)
+	deleteTrackingDataByPrimaryKeyUsecase := usecases.NewDeleteTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
 
 	/* Test usecase creation */
-	dataToInsert := dtos.TrackingDataDTO{
-		FirstName:       "Guilherme",
-		LastName:        "Rodrigues",
-		Timestamp:       time.Now(),
-		Location:        "Brazil",
-		Speed:           50.5,
-		Heat:            40,
-		TelepathyPowers: 10,
-	}
-
-	result, err := createTrackingDataUsecase.Perform(dataToInsert)
-	if err != nil {
-		logger.Error("Error on tracking data creation: ", zap.Error(err))
-	}
-	fmt.Printf("%+v", result)
+	dataToDelete := mocks.DataToDelete
+	deleteTrackingDataByPrimaryKeyUsecase.Perform(dataToDelete)
 
 	return &Container{}
 }

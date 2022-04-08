@@ -11,3 +11,14 @@ type TrackingDataDTO struct {
 	Heat            float64   `json:"heat"`
 	TelepathyPowers int       `json:"telepathyPowers"`
 }
+
+type TrackingDataPrimaryKeyDTO struct {
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	Timestamp time.Time `json:"timestamp"`
+}
+
+type TrackingDataPartitionKeyDTO struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+}

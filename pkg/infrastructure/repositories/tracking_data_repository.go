@@ -23,8 +23,8 @@ func (repo *trackingDataRepository) AddTrackingData(trackingData *dtos.TrackingD
 	return trackingData, nil
 }
 
-func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData *entities.TrackingDataEntity) error {
-	err := repo.queryBuilder.Delete(trackingData)
+func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData *dtos.TrackingDataPrimaryKeyDTO) error {
+	err := repo.queryBuilder.Delete(trackingDataPrimaryKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error("Could not delete tracking data using primary key. Error: ", zap.Error(err))
 		return err
@@ -82,6 +82,25 @@ func trackingDataDTOToEntity(dto *dtos.TrackingDataDTO) *entities.TrackingDataEn
 		Speed:           dto.Speed,
 		Heat:            dto.Heat,
 		TelepathyPowers: dto.TelepathyPowers,
+	}
+
+	return trackingDataEntity
+}
+
+func trackingDataPrimaryKeyDTOToEntity(dto *dtos.TrackingDataPrimaryKeyDTO) *entities.TrackingDataEntity {
+	trackingDataEntity := &entities.TrackingDataEntity{
+		FirstName: dto.FirstName,
+		LastName:  dto.LastName,
+		Timestamp: dto.Timestamp,
+	}
+
+	return trackingDataEntity
+}
+
+func trackingDataPartitionKeyDTOToEntity(dto *dtos.TrackingDataPartitionKeyDTO) *entities.TrackingDataEntity {
+	trackingDataEntity := &entities.TrackingDataEntity{
+		FirstName: dto.FirstName,
+		LastName:  dto.LastName,
 	}
 
 	return trackingDataEntity

@@ -1,14 +1,30 @@
 package mocks
 
-// dataToInsert := dtos.TrackingDataDTO{
-//   FirstName: "Guilherme",
-//   LastName: "Rodrigues",
-//   Timestamp: time.Now(),
-//   Location: "Brazil",
-//   Speed: 50.5,
-//   Heat: 40,
-//   TelepathyPowers: 10,
-// }
+import (
+	"base/pkg/domain/dtos"
+	"time"
+)
+
+var (
+	timeLayout   = "2006-01-02 15:04:05 -0700 MST"
+	timestamp, _ = time.Parse(timeLayout, "2017-11-11 11:05:00 +0000 UTC")
+
+	DataToInsert = dtos.TrackingDataDTO{
+		FirstName:       "Guilherme",
+		LastName:        "Rodrigues",
+		Timestamp:       time.Now(),
+		Location:        "Brazil",
+		Speed:           50.5,
+		Heat:            40,
+		TelepathyPowers: 10,
+	}
+
+	DataToDelete = dtos.TrackingDataPrimaryKeyDTO{
+		FirstName: "Jim",
+		LastName:  "Jeffries",
+		Timestamp: timestamp,
+	}
+)
 
 /* Delete */
 // timeLayout := "2006-01-02 15:04:05 -0700 MST"
