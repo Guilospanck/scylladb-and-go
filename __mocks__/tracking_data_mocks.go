@@ -7,9 +7,9 @@ import (
 
 var (
 	timeLayout   = "2006-01-02 15:04:05 -0700 MST"
-	timestamp, _ = time.Parse(timeLayout, "2017-11-11 11:05:00 +0000 UTC")
+	timestamp, _ = time.Parse(timeLayout, "2017-11-11 12:05:00 +0000 UTC")
 
-	DataToInsert = dtos.TrackingDataDTO{
+	CompleteData = dtos.TrackingDataDTO{
 		FirstName:       "Guilherme",
 		LastName:        "Rodrigues",
 		Timestamp:       time.Now(),
@@ -19,7 +19,7 @@ var (
 		TelepathyPowers: 10,
 	}
 
-	DataToDelete = dtos.TrackingDataPrimaryKeyDTO{
+	PrimaryKeyData = dtos.TrackingDataPrimaryKeyDTO{
 		FirstName: "Jim",
 		LastName:  "Jeffries",
 		Timestamp: timestamp,

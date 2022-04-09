@@ -76,11 +76,18 @@ func NewContainer() *Container {
 
 	/* Use cases */
 	// createTrackingDataUsecase := usecases.NewCreateTrackingDataUsecase(trackingDataRepo)
-	deleteTrackingDataByPrimaryKeyUsecase := usecases.NewDeleteTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
+	// deleteTrackingDataByPrimaryKeyUsecase := usecases.NewDeleteTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
+	findTrackingDataByPrimaryKey := usecases.NewFindTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
 
 	/* Test usecase creation */
-	dataToDelete := mocks.DataToDelete
-	deleteTrackingDataByPrimaryKeyUsecase.Perform(dataToDelete)
+	primaryKeyToFind := mocks.PrimaryKeyData
+
+	result, err := findTrackingDataByPrimaryKey.Perform(primaryKeyToFind)
+	if err != nil {
+		logger.Error("Error when finding data: ", zap.Error(err))
+	}
+
+	log.Printf("%+v", result)
 
 	return &Container{}
 }

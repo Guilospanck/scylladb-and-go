@@ -94,14 +94,18 @@ func (queryBuilder *queryBuilder[T]) Get(dataToGet *T) (*T, error) {
 	selectStatement, selectNames := queryBuilder.model.Get()
 	selectQuery := queryBuilder.session.Query(selectStatement, selectNames)
 
-	var result *T
+	var result []T
 	err := selectQuery.BindStruct(dataToGet).SelectRelease(&result)
 	if err != nil {
 		queryBuilder.logger.Error("Get error", zap.Error(err))
 		return nil, err
 	}
 
-	return result, nil
+	if len(result) > 0 {
+		return &result[0], nil
+	}
+
+	return nil, nil
 }
 
 /* It will everything from table.
