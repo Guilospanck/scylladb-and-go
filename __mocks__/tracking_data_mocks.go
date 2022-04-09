@@ -24,6 +24,11 @@ var (
 		LastName:  "Jeffries",
 		Timestamp: timestamp,
 	}
+
+	PartitionKeyData = dtos.TrackingDataPartitionKeyDTO{
+		FirstName: "Jim",
+		LastName:  "Jeffries",
+	}
 )
 
 /* Delete */

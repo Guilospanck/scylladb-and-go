@@ -2,7 +2,6 @@
 package cmd
 
 import (
-	mocks "base/__mocks__"
 	"base/pkg/application/interfaces"
 	"base/pkg/application/usecases"
 	"base/pkg/infrastructure/database"
@@ -77,17 +76,19 @@ func NewContainer() *Container {
 	/* Use cases */
 	// createTrackingDataUsecase := usecases.NewCreateTrackingDataUsecase(trackingDataRepo)
 	// deleteTrackingDataByPrimaryKeyUsecase := usecases.NewDeleteTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
-	findTrackingDataByPrimaryKey := usecases.NewFindTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
+	// findTrackingDataByPrimaryKey := usecases.NewFindTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
+	// findAllTrackingDataByPartitionKey := usecases.NewFindAllTrackingDataByPartitionKeyUsecase(trackingDataRepo)
+	findAllTrackingData := usecases.NewFindAllTrackingDataUsecase(trackingDataRepo)
 
 	/* Test usecase creation */
-	primaryKeyToFind := mocks.PrimaryKeyData
-
-	result, err := findTrackingDataByPrimaryKey.Perform(primaryKeyToFind)
+	results, err := findAllTrackingData.Perform()
 	if err != nil {
-		logger.Error("Error when finding data: ", zap.Error(err))
+		logger.Error("Error when finding all data: ", zap.Error(err))
 	}
 
-	log.Printf("%+v", result)
+	for _, value := range results {
+		log.Printf("%+v", value)
+	}
 
 	return &Container{}
 }

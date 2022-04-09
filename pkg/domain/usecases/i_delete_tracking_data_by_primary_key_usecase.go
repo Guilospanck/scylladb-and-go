@@ -2,6 +2,6 @@ package usecases
 
 import "base/pkg/domain/dtos"
 
-type IDeleteeTrackingDataByPrimaryKeyUsecase interface {
+type IDeleteTrackingDataByPrimaryKeyUsecase interface {
 	Perform(data dtos.TrackingDataPrimaryKeyDTO) error
 }
