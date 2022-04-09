@@ -4,8 +4,7 @@ import (
 	"base/pkg/application/interfaces"
 	"base/pkg/domain/dtos"
 	"base/pkg/infrastructure/database/entities"
-
-	"go.uber.org/zap"
+	"fmt"
 )
 
 type trackingDataRepository struct {
@@ -16,7 +15,7 @@ type trackingDataRepository struct {
 func (repo *trackingDataRepository) AddTrackingData(trackingData *dtos.TrackingDataDTO) (*dtos.TrackingDataDTO, error) {
 	err := repo.queryBuilder.Insert(trackingDataDTOToEntity(trackingData))
 	if err != nil {
-		repo.logger.Error("Could not add tracking data. Error: ", zap.Error(err))
+		repo.logger.Error(fmt.Sprintf("Could not add tracking data. Error:  %s", err.Error()))
 		return nil, err
 	}
 
@@ -26,7 +25,7 @@ func (repo *trackingDataRepository) AddTrackingData(trackingData *dtos.TrackingD
 func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData *dtos.TrackingDataPrimaryKeyDTO) error {
 	err := repo.queryBuilder.Delete(trackingDataPrimaryKeyDTOToEntity(trackingData))
 	if err != nil {
-		repo.logger.Error("Could not delete tracking data using primary key. Error: ", zap.Error(err))
+		repo.logger.Error(fmt.Sprintf("Could not delete tracking data using primary key. Error:  %s", err.Error()))
 		return err
 	}
 
@@ -36,7 +35,7 @@ func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData 
 func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingData *dtos.TrackingDataPartitionKeyDTO) error {
 	err := repo.queryBuilder.DeleteAllFromPartitioningKey(trackingDataPartitionKeyDTOToEntity(trackingData))
 	if err != nil {
-		repo.logger.Error("Could not delete tracking data using partition key. Error: ", zap.Error(err))
+		repo.logger.Error(fmt.Sprintf("Could not delete tracking data using partition key. Error:  %s", err.Error()))
 		return err
 	}
 
@@ -46,7 +45,7 @@ func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingDat
 func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(trackingData *dtos.TrackingDataPrimaryKeyDTO) (*dtos.TrackingDataDTO, error) {
 	result, err := repo.queryBuilder.Get(trackingDataPrimaryKeyDTOToEntity(trackingData))
 	if err != nil {
-		repo.logger.Error("Could not find tracking data by primary key. Error: ", zap.Error(err))
+		repo.logger.Error(fmt.Sprintf("Could not find tracking data by primary key. Error:  %s", err.Error()))
 		return nil, err
 	}
 
@@ -56,7 +55,7 @@ func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(trackingData *d
 func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(trackingData *dtos.TrackingDataPartitionKeyDTO) ([]*dtos.TrackingDataDTO, error) {
 	results, err := repo.queryBuilder.Select(trackingDataPartitionKeyDTOToEntity(trackingData))
 	if err != nil {
-		repo.logger.Error("Could not find all tracking data by partition key. Error: ", zap.Error(err))
+		repo.logger.Error(fmt.Sprintf("Could not find all tracking data by partition key. Error:  %s", err.Error()))
 		return nil, err
 	}
 
@@ -72,7 +71,7 @@ func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(trackingDa
 func (repo *trackingDataRepository) FindAllTrackingData() ([]*dtos.TrackingDataDTO, error) {
 	results, err := repo.queryBuilder.SelectAll()
 	if err != nil {
-		repo.logger.Error("Could not find all tracking data. Error: ", zap.Error(err))
+		repo.logger.Error(fmt.Sprintf("Could not find all tracking data. Error:  %s", err.Error()))
 		return nil, err
 	}
 

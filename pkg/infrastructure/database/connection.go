@@ -2,11 +2,11 @@ package database
 
 import (
 	"base/pkg/application/interfaces"
+	"fmt"
 	"time"
 
 	"github.com/gocql/gocql"
 	"github.com/scylladb/gocqlx/v2"
-	"go.uber.org/zap"
 )
 
 type scyllaDBConnection struct {
@@ -36,7 +36,7 @@ func (conn *scyllaDBConnection) createCluster() *gocql.ClusterConfig {
 func (conn *scyllaDBConnection) createSession(cluster *gocql.ClusterConfig) (*gocqlx.Session, error) {
 	session, err := gocqlx.WrapSession(cluster.CreateSession())
 	if err != nil {
-		conn.logger.Error("An error occurred while creating DB session: ", zap.Error(err))
+		conn.logger.Error(fmt.Sprintf("An error occurred while creating DB session: %s", err.Error()))
 		return nil, err
 	}
 

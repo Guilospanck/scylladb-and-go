@@ -3,19 +3,18 @@ package cmd
 
 import (
 	"base/pkg/application/interfaces"
-	"base/pkg/application/usecases"
 	"base/pkg/infrastructure/database"
 	"base/pkg/infrastructure/database/entities"
 	"base/pkg/infrastructure/database/models"
 	_ "base/pkg/infrastructure/environments"
 	"base/pkg/infrastructure/logger"
 	"base/pkg/infrastructure/repositories"
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
 	"github.com/gocql/gocql"
-	"go.uber.org/zap"
 )
 
 type Container struct{}
@@ -23,7 +22,7 @@ type Container struct{}
 func ShowValuesSelectAll[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger) {
 	results, err := querybuilder.SelectAll()
 	if err != nil {
-		logger.Error("SelectAll() error", zap.Error(err))
+		logger.Error(fmt.Sprintf("SelectAll() error %s", err.Error()))
 	}
 
 	for _, value := range results {
@@ -34,7 +33,7 @@ func ShowValuesSelectAll[T any](querybuilder interfaces.IQueryBuilder[T], logger
 func ShowSelect[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger, dataToBeSearched *T) {
 	results, err := querybuilder.Select(dataToBeSearched)
 	if err != nil {
-		logger.Error("Select() error", zap.Error(err))
+		logger.Error(fmt.Sprintf("Select() error %s", err.Error()))
 	}
 
 	for _, value := range results {
@@ -45,7 +44,7 @@ func ShowSelect[T any](querybuilder interfaces.IQueryBuilder[T], logger interfac
 func ShowGet[T any](querybuilder interfaces.IQueryBuilder[T], logger interfaces.ILogger, dataToBeSearched *T) {
 	result, err := querybuilder.Get(dataToBeSearched)
 	if err != nil {
-		logger.Error("Get() error", zap.Error(err))
+		logger.Error(fmt.Sprintf("Get() error %s", err.Error()))
 	}
 
 	log.Printf("%+v", result)
@@ -78,17 +77,7 @@ func NewContainer() *Container {
 	// deleteTrackingDataByPrimaryKeyUsecase := usecases.NewDeleteTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
 	// findTrackingDataByPrimaryKey := usecases.NewFindTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
 	// findAllTrackingDataByPartitionKey := usecases.NewFindAllTrackingDataByPartitionKeyUsecase(trackingDataRepo)
-	findAllTrackingData := usecases.NewFindAllTrackingDataUsecase(trackingDataRepo)
-
-	/* Test usecase creation */
-	results, err := findAllTrackingData.Perform()
-	if err != nil {
-		logger.Error("Error when finding all data: ", zap.Error(err))
-	}
-
-	for _, value := range results {
-		log.Printf("%+v", value)
-	}
+	// findAllTrackingData := usecases.NewFindAllTrackingDataUsecase(trackingDataRepo)
 
 	return &Container{}
 }

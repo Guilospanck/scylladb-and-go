@@ -6,7 +6,6 @@ import (
 
 	"github.com/scylladb/gocqlx/v2"
 	"github.com/scylladb/gocqlx/v2/table"
-	"go.uber.org/zap"
 )
 
 type queryBuilder[T any] struct {
@@ -24,7 +23,7 @@ func (queryBuilder *queryBuilder[T]) Insert(insertData *T) error {
 
 	err := insertQuery.BindStruct(insertData).ExecRelease()
 	if err != nil {
-		queryBuilder.logger.Error("Insert error: ", zap.Error(err))
+		queryBuilder.logger.Error(fmt.Sprintf("Insert() error %s", err.Error()))
 		return err
 	}
 
@@ -40,7 +39,7 @@ func (queryBuilder *queryBuilder[T]) Delete(dataToBeDeleted *T) error {
 
 	err := deleteQuery.BindStruct(dataToBeDeleted).ExecRelease()
 	if err != nil {
-		queryBuilder.logger.Error("Delete by Primary Key error: ", zap.Error(err))
+		queryBuilder.logger.Error(fmt.Sprintf("Delete by Primary Key error: %s", err.Error()))
 		return err
 	}
 
@@ -63,7 +62,7 @@ func (queryBuilder *queryBuilder[T]) DeleteAllFromPartitioningKey(dataToBeDelete
 
 	err := deleteQuery.BindStruct(dataToBeDeleted).ExecRelease()
 	if err != nil {
-		queryBuilder.logger.Error("Delete by Partition Key error: ", zap.Error(err))
+		queryBuilder.logger.Error(fmt.Sprintf("Delete by Partition Key error: %s", err.Error()))
 		return err
 	}
 
@@ -80,7 +79,7 @@ func (queryBuilder *queryBuilder[T]) Select(dataToGet *T) ([]T, error) {
 	var results []T
 	err := selectQuery.BindStruct(dataToGet).SelectRelease(&results)
 	if err != nil {
-		queryBuilder.logger.Error("Select error", zap.Error(err))
+		queryBuilder.logger.Error(fmt.Sprintf("Select error: %s", err.Error()))
 		return nil, err
 	}
 
@@ -97,7 +96,7 @@ func (queryBuilder *queryBuilder[T]) Get(dataToGet *T) (*T, error) {
 	var result []T
 	err := selectQuery.BindStruct(dataToGet).SelectRelease(&result)
 	if err != nil {
-		queryBuilder.logger.Error("Get error", zap.Error(err))
+		queryBuilder.logger.Error(fmt.Sprintf("Get error: %s", err.Error()))
 		return nil, err
 	}
 
@@ -118,7 +117,7 @@ func (queryBuilder *queryBuilder[T]) SelectAll() ([]T, error) {
 	var results []T
 	err := selectAllQuery.SelectRelease(&results)
 	if err != nil {
-		queryBuilder.logger.Error("SelectAll error", zap.Error(err))
+		queryBuilder.logger.Error(fmt.Sprintf("SelectAll error: %s", err.Error()))
 		return nil, err
 	}
 
