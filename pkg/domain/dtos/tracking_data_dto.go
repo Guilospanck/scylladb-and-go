@@ -51,14 +51,12 @@ func (timestamp *Timestamp) UnmarshalJSON(b []byte) error {
 func ParseJson(data []byte, dto interface{}, dtoName string) error {
 	err := json.Unmarshal(data, dto)
 	if err != nil {
-		fmt.Printf("[ParseJson] Error: %s", err.Error())
-		return err
+		return fmt.Errorf("[ParseJson] Error: %s\n", err.Error())
 	}
 
 	err = isValid(dto, dtoName)
 	if err != nil {
-		fmt.Printf("Error:\n%s", err.Error())
-		return err
+		return fmt.Errorf("[isValid] Error: %s\n", err.Error())
 	}
 
 	return nil
