@@ -4,6 +4,7 @@ import (
 	"base/pkg/application/interfaces"
 	"base/pkg/domain/dtos"
 	"base/pkg/infrastructure/database/entities"
+	"context"
 	"fmt"
 )
 
@@ -12,8 +13,8 @@ type trackingDataRepository struct {
 	logger       interfaces.ILogger
 }
 
-func (repo *trackingDataRepository) AddTrackingData(trackingData *dtos.TrackingDataDTO) (*dtos.TrackingDataDTO, error) {
-	err := repo.queryBuilder.Insert(trackingDataDTOToEntity(trackingData))
+func (repo *trackingDataRepository) AddTrackingData(ctx context.Context, trackingData *dtos.TrackingDataDTO) (*dtos.TrackingDataDTO, error) {
+	err := repo.queryBuilder.Insert(ctx, trackingDataDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not add tracking data. Error:  %s", err.Error()))
 		return nil, err
@@ -22,8 +23,8 @@ func (repo *trackingDataRepository) AddTrackingData(trackingData *dtos.TrackingD
 	return trackingData, nil
 }
 
-func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData *dtos.TrackingDataPrimaryKeyDTO) error {
-	err := repo.queryBuilder.Delete(trackingDataPrimaryKeyDTOToEntity(trackingData))
+func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(ctx context.Context, trackingData *dtos.TrackingDataPrimaryKeyDTO) error {
+	err := repo.queryBuilder.Delete(ctx, trackingDataPrimaryKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not delete tracking data using primary key. Error:  %s", err.Error()))
 		return err
@@ -32,8 +33,8 @@ func (repo *trackingDataRepository) DeleteTrackingDataByPrimaryKey(trackingData 
 	return nil
 }
 
-func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingData *dtos.TrackingDataPartitionKeyDTO) error {
-	err := repo.queryBuilder.DeleteAllFromPartitioningKey(trackingDataPartitionKeyDTOToEntity(trackingData))
+func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(ctx context.Context, trackingData *dtos.TrackingDataPartitionKeyDTO) error {
+	err := repo.queryBuilder.DeleteAllFromPartitioningKey(ctx, trackingDataPartitionKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not delete tracking data using partition key. Error:  %s", err.Error()))
 		return err
@@ -42,8 +43,8 @@ func (repo *trackingDataRepository) DeleteTrackingDataByPartitionKey(trackingDat
 	return nil
 }
 
-func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(trackingData *dtos.TrackingDataPrimaryKeyDTO) (*dtos.TrackingDataDTO, error) {
-	result, err := repo.queryBuilder.Get(trackingDataPrimaryKeyDTOToEntity(trackingData))
+func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(ctx context.Context, trackingData *dtos.TrackingDataPrimaryKeyDTO) (*dtos.TrackingDataDTO, error) {
+	result, err := repo.queryBuilder.Get(ctx, trackingDataPrimaryKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not find tracking data by primary key. Error:  %s", err.Error()))
 		return nil, err
@@ -52,8 +53,8 @@ func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(trackingData *d
 	return trackingDataEntityToDTO(result), err
 }
 
-func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(trackingData *dtos.TrackingDataPartitionKeyDTO) ([]*dtos.TrackingDataDTO, error) {
-	results, err := repo.queryBuilder.Select(trackingDataPartitionKeyDTOToEntity(trackingData))
+func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(ctx context.Context, trackingData *dtos.TrackingDataPartitionKeyDTO) ([]*dtos.TrackingDataDTO, error) {
+	results, err := repo.queryBuilder.Select(ctx, trackingDataPartitionKeyDTOToEntity(trackingData))
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not find all tracking data by partition key. Error:  %s", err.Error()))
 		return nil, err
@@ -68,8 +69,8 @@ func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(trackingDa
 	return arrayOfResults, nil
 }
 
-func (repo *trackingDataRepository) FindAllTrackingData() ([]*dtos.TrackingDataDTO, error) {
-	results, err := repo.queryBuilder.SelectAll()
+func (repo *trackingDataRepository) FindAllTrackingData(ctx context.Context) ([]*dtos.TrackingDataDTO, error) {
+	results, err := repo.queryBuilder.SelectAll(ctx)
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not find all tracking data. Error:  %s", err.Error()))
 		return nil, err
