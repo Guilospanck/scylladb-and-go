@@ -1,12 +1,14 @@
 package interfaces
 
+import "context"
+
 type T any
 
 type IQueryBuilder[t T] interface {
-	Insert(insertData *t) error
-	Delete(dataToBeDeleted *t) error
-	DeleteAllFromPartitioningKey(dataToBeDeleted *t) error
-	Select(dataToGet *t) ([]t, error)
-	Get(dataToGet *t) (*t, error)
-	SelectAll() ([]t, error)
+	Insert(ctx context.Context, insertData *t) error
+	Delete(ctx context.Context, dataToBeDeleted *t) error
+	DeleteAllFromPartitioningKey(ctx context.Context, dataToBeDeleted *t) error
+	Select(ctx context.Context, dataToGet *t) ([]t, error)
+	Get(ctx context.Context, dataToGet *t) (*t, error)
+	SelectAll(ctx context.Context) ([]t, error)
 }

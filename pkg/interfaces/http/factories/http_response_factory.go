@@ -1,6 +1,7 @@
 package factories
 
 import (
+	"base/pkg/application/errors"
 	httpserver "base/pkg/infrastructure/http_server"
 	"net/http"
 )
@@ -109,14 +110,12 @@ func (HttpResponseFactory) GenericResponse(statusCode int, body interface{}, hea
 	}
 }
 
-func (pst HttpResponseFactory) ErrorResponseMapper(err error, headers http.Header) httpserver.HttpResponse {
+func (factory HttpResponseFactory) ErrorResponseMapper(err error, headers http.Header) httpserver.HttpResponse {
 	switch err.(type) {
-	case errors.NotFoundError:
-		return pst.NotFound(err.Error(), headers)
-	case errors.ConflictError:
-		return pst.Conflict(err.Error(), headers)
+	case errors.InternalError:
+		return factory.InternalServerError(err.Error(), headers)
 	default:
-		return pst.InternalServerError(err.Error(), headers)
+		return factory.InternalServerError(err.Error(), headers)
 	}
 }
 
