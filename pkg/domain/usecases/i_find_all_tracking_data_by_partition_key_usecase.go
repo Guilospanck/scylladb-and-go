@@ -1,7 +1,10 @@
 package usecases
 
-import "base/pkg/domain/dtos"
+import (
+	"base/pkg/domain/dtos"
+	"context"
+)
 
 type IFindAllTrackingDataByPartitionKeyUsecase interface {
-	Perform(data dtos.TrackingDataPartitionKeyDTO) ([]*dtos.TrackingDataDTO, error)
+	Perform(ctx context.Context, data dtos.TrackingDataPartitionKeyDTO) ([]*dtos.TrackingDataDTO, error)
 }

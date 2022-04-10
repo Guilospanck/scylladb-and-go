@@ -1,7 +1,10 @@
 package usecases
 
-import "base/pkg/domain/dtos"
+import (
+	"base/pkg/domain/dtos"
+	"context"
+)
 
 type IFindAllTrackingDataUsecase interface {
-	Perform() ([]*dtos.TrackingDataDTO, error)
+	Perform(ctx context.Context) ([]*dtos.TrackingDataDTO, error)
 }

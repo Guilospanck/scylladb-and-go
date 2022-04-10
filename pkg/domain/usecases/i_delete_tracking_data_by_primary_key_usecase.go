@@ -1,7 +1,10 @@
 package usecases
 
-import "base/pkg/domain/dtos"
+import (
+	"base/pkg/domain/dtos"
+	"context"
+)
 
 type IDeleteTrackingDataByPrimaryKeyUsecase interface {
-	Perform(data dtos.TrackingDataPrimaryKeyDTO) error
+	Perform(ctx context.Context, data dtos.TrackingDataPrimaryKeyDTO) error
 }
