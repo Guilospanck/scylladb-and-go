@@ -87,10 +87,11 @@ func (repo *trackingDataRepository) FindAllTrackingData(ctx context.Context) ([]
 }
 
 func trackingDataEntityToDTO(entity *entities.TrackingDataEntity) *dtos.TrackingDataDTO {
+	timestamp := dtos.Timestamp(entity.Timestamp)
 	return &dtos.TrackingDataDTO{
 		FirstName:       entity.FirstName,
 		LastName:        entity.LastName,
-		Timestamp:       dtos.Timestamp(entity.Timestamp),
+		Timestamp:       &timestamp,
 		Location:        entity.Location,
 		Speed:           entity.Speed,
 		Heat:            entity.Heat,
@@ -102,7 +103,7 @@ func trackingDataDTOToEntity(dto *dtos.TrackingDataDTO) *entities.TrackingDataEn
 	trackingDataEntity := &entities.TrackingDataEntity{
 		FirstName:       dto.FirstName,
 		LastName:        dto.LastName,
-		Timestamp:       time.Time(dto.Timestamp),
+		Timestamp:       time.Time(*dto.Timestamp),
 		Location:        dto.Location,
 		Speed:           dto.Speed,
 		Heat:            dto.Heat,
@@ -116,7 +117,7 @@ func trackingDataPrimaryKeyDTOToEntity(dto *dtos.TrackingDataPrimaryKeyDTO) *ent
 	trackingDataEntity := &entities.TrackingDataEntity{
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
-		Timestamp: time.Time(dto.Timestamp),
+		Timestamp: time.Time(*dto.Timestamp),
 	}
 
 	return trackingDataEntity

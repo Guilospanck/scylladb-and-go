@@ -12,19 +12,19 @@ import (
 type Timestamp time.Time
 
 type TrackingDataDTO struct {
-	FirstName       string    `json:"firstName" validate:"required"`
-	LastName        string    `json:"lastName" validate:"required"`
-	Timestamp       Timestamp `json:"timestamp" validate:"required"`
-	Location        string    `json:"location"`
-	Speed           float64   `json:"speed"`
-	Heat            float64   `json:"heat"`
-	TelepathyPowers int       `json:"telepathyPowers"`
+	FirstName       string     `json:"firstName" validate:"required"`
+	LastName        string     `json:"lastName" validate:"required"`
+	Timestamp       *Timestamp `json:"timestamp" validate:"required"`
+	Location        string     `json:"location"`
+	Speed           float64    `json:"speed"`
+	Heat            float64    `json:"heat"`
+	TelepathyPowers int        `json:"telepathyPowers"`
 }
 
 type TrackingDataPrimaryKeyDTO struct {
-	FirstName string    `json:"firstName" validate:"required"`
-	LastName  string    `json:"lastName" validate:"required"`
-	Timestamp Timestamp `json:"timestamp" validate:"required"`
+	FirstName string     `json:"firstName" validate:"required"`
+	LastName  string     `json:"lastName" validate:"required"`
+	Timestamp *Timestamp `json:"timestamp" validate:"required"`
 }
 
 type TrackingDataPartitionKeyDTO struct {
