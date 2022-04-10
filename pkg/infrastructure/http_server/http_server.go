@@ -68,3 +68,9 @@ func (server *HTTPServer) Run() error {
 	server.logger.Info(fmt.Sprintf("Server running at https://%s", server.address))
 	return nil
 }
+
+func NewHTTPServer(logger interfaces.ILogger) *HTTPServer {
+	return &HTTPServer{
+		logger: logger,
+	}
+}
