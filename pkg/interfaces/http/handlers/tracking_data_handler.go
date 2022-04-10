@@ -44,12 +44,12 @@ func (handler *trackingDataHandler) Create(httpRequest httpserver.HttpRequest) h
 	}
 
 	/* Usecase */
-	results, err := handler.createUsecase.Perform(httpRequest.Ctx, dto)
+	result, err := handler.createUsecase.Perform(httpRequest.Ctx, dto)
 	if err != nil {
 		return handler.httpResponseFactory.ErrorResponseMapper(err, nil)
 	}
 
-	return handler.httpResponseFactory.Created(results, nil)
+	return handler.httpResponseFactory.Created(result, nil)
 
 }
 
