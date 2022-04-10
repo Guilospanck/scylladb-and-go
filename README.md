@@ -6,10 +6,11 @@ Using ScyllaDB with Go.
 </div>
 
 ## Technologies
-- ScyllaDB
-- Golang
-- gocql
-- gocqlx
+- [ScyllaDB]
+- [Golang]
+- [gocql]
+- [gocqlx]
+- [govalidator]
 
 ### goclq
 `gocql` is the driver to use ScyllaDB with Golang.
@@ -27,7 +28,7 @@ git clone https://github.com/Guilospanck/scylladb-and-go.git
 ```
 Change directory into it:
 ```bash
-cd scylladb-and-go
+cd scylladb-and-go/
 ```
 Then put Scylla cluster UP by using docker-compose:
 ```bash
@@ -66,6 +67,16 @@ sudo docker-compose -f docker-compose.yml up -d --build
 ## How to use the application
 Once you have all the above section setted up, follow this one.
 
+### Running the Go HTTPS server
+Change directory into the project directory
+```bash
+cd scylladb-and-go/
+```
+And then run
+```bash
+go run .
+```
+
 ### Queries
 Using `gocqlx` to create our queries we have the following:
 ```go
@@ -88,7 +99,33 @@ type IQueryBuilder[t T] interface {
 - `Get`: will return data based on the Primary Key (PK + CK)
 - `SelectAll`: will return all data from table
 
+### Making requests
+You can use either the simple `curl` function or the `Insomnia` program.
+> If using Insomnia, be sure to go to Applications > Preferences and then uncheck "Validate certificates" under "Request/Response" section. This is needed in order to make requests to the HTTPS localhost.
+
+- Insert tracking data
+  - curl
+    ```bash
+    curl --location --request POST 'https://localhost:4444/api/v1/tracking' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "firstName": "Post",
+        "lastName": "Test",
+        "timestamp": "2022-04-10 09:10:00 +0000 UTC",
+        "location": "Brazil",
+        "speed": 10,
+        "heat": 25,
+        "telepathyPowers": 222
+    }'
+    ```
+  - Insomnia: run `Insert tracking data`
+
+
 
 [Docker]: (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
 [Docker Compose]: (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
 [Golang]: (https://go.dev/dl/)
+[govalidator]: (https://github.com/go-playground/validator)
+[gocqlx]: (https://github.com/scylladb/gocqlx)
+[gocql]: (https://github.com/scylladb/gocql)
+[ScyllaDB]: (https://www.scylladb.com/)
