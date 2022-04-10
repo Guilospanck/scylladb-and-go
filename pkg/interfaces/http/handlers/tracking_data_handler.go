@@ -5,8 +5,10 @@ package handlers
 
 import (
 	"base/pkg/application/interfaces"
+	"base/pkg/domain/dtos"
 	"base/pkg/domain/usecases"
 	httpserver "base/pkg/infrastructure/http_server"
+	"base/pkg/interfaces/http/factories"
 )
 
 type ITrackingDataHandler interface {
@@ -19,7 +21,8 @@ type ITrackingDataHandler interface {
 }
 
 type trackingDataHandler struct {
-	logger interfaces.ILogger
+	logger              interfaces.ILogger
+	httpResponseFactory factories.HttpResponseFactory
 
 	createUsecase usecases.ICreateTrackingDataUsecase
 
@@ -32,6 +35,13 @@ type trackingDataHandler struct {
 }
 
 func (handler *trackingDataHandler) Create(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
+	dto := dtos.TrackingDataDTO{}
+
+	err := dtos.ParseJson(httpRequest.Body, dto, "TrackingDataDTO")
+	if err != nil {
+		return handler.httpResponseFactory.BadRequest("Body must be a valid json.", nil)
+	}
+
 }
 
 func (handler *trackingDataHandler) DeleteByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
