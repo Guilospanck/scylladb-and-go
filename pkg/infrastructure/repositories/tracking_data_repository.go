@@ -9,6 +9,8 @@ import (
 	"time"
 )
 
+const TIME_LAYOUT = "2006-01-02 15:04:05 -0700 MST"
+
 type trackingDataRepository struct {
 	queryBuilder interfaces.IQueryBuilder[entities.TrackingDataEntity]
 	logger       interfaces.ILogger
@@ -87,11 +89,10 @@ func (repo *trackingDataRepository) FindAllTrackingData(ctx context.Context) ([]
 }
 
 func trackingDataEntityToDTO(entity *entities.TrackingDataEntity) *dtos.TrackingDataDTO {
-	timestamp := dtos.Timestamp(entity.Timestamp)
 	return &dtos.TrackingDataDTO{
 		FirstName:       entity.FirstName,
 		LastName:        entity.LastName,
-		Timestamp:       &timestamp,
+		Timestamp:       entity.Timestamp.String(),
 		Location:        entity.Location,
 		Speed:           entity.Speed,
 		Heat:            entity.Heat,
@@ -100,10 +101,12 @@ func trackingDataEntityToDTO(entity *entities.TrackingDataEntity) *dtos.Tracking
 }
 
 func trackingDataDTOToEntity(dto *dtos.TrackingDataDTO) *entities.TrackingDataEntity {
+	timestamp, _ := time.Parse(TIME_LAYOUT, dto.Timestamp)
+
 	trackingDataEntity := &entities.TrackingDataEntity{
 		FirstName:       dto.FirstName,
 		LastName:        dto.LastName,
-		Timestamp:       time.Time(*dto.Timestamp),
+		Timestamp:       timestamp,
 		Location:        dto.Location,
 		Speed:           dto.Speed,
 		Heat:            dto.Heat,
@@ -114,10 +117,12 @@ func trackingDataDTOToEntity(dto *dtos.TrackingDataDTO) *entities.TrackingDataEn
 }
 
 func trackingDataPrimaryKeyDTOToEntity(dto *dtos.TrackingDataPrimaryKeyDTO) *entities.TrackingDataEntity {
+	timestamp, _ := time.Parse(TIME_LAYOUT, dto.Timestamp)
+
 	trackingDataEntity := &entities.TrackingDataEntity{
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
-		Timestamp: time.Time(*dto.Timestamp),
+		Timestamp: timestamp,
 	}
 
 	return trackingDataEntity

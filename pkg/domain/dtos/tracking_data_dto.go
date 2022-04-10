@@ -3,7 +3,6 @@ package dtos
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
@@ -12,19 +11,19 @@ import (
 type Timestamp time.Time
 
 type TrackingDataDTO struct {
-	FirstName       string     `json:"firstName" validate:"required"`
-	LastName        string     `json:"lastName" validate:"required"`
-	Timestamp       *Timestamp `json:"timestamp" validate:"required"`
-	Location        string     `json:"location"`
-	Speed           float64    `json:"speed"`
-	Heat            float64    `json:"heat"`
-	TelepathyPowers int        `json:"telepathyPowers"`
+	FirstName       string  `json:"firstName" validate:"required"`
+	LastName        string  `json:"lastName" validate:"required"`
+	Timestamp       string  `json:"timestamp" validate:"required,isTimestamp"`
+	Location        string  `json:"location"`
+	Speed           float64 `json:"speed"`
+	Heat            float64 `json:"heat"`
+	TelepathyPowers int     `json:"telepathyPowers"`
 }
 
 type TrackingDataPrimaryKeyDTO struct {
-	FirstName string     `json:"firstName" validate:"required"`
-	LastName  string     `json:"lastName" validate:"required"`
-	Timestamp *Timestamp `json:"timestamp" validate:"required"`
+	FirstName string `json:"firstName" validate:"required"`
+	LastName  string `json:"lastName" validate:"required"`
+	Timestamp string `json:"timestamp" validate:"required"`
 }
 
 type TrackingDataPartitionKeyDTO struct {
@@ -32,20 +31,15 @@ type TrackingDataPartitionKeyDTO struct {
 	LastName  string `json:"lastName" validate:"required"`
 }
 
-func (timestamp *Timestamp) UnmarshalJSON(b []byte) error {
-	value := strings.Trim(string(b), `"`)
-	if value == "" || value == "null" {
-		return nil
-	}
-
+func isTimestamp(field validator.FieldLevel) bool {
 	const timeLayout = "2006-01-02 15:04:05 -0700 MST"
-	t, err := time.Parse(timeLayout, value)
+
+	_, err := time.Parse(timeLayout, field.Field().String())
 	if err != nil {
-		return err
+		return false
 	}
 
-	*timestamp = Timestamp(t)
-	return nil
+	return true
 }
 
 func ParseJson(data []byte, dto interface{}, dtoName string) error {
@@ -64,6 +58,7 @@ func ParseJson(data []byte, dto interface{}, dtoName string) error {
 
 func isValid(dto interface{}, dtoName string) error {
 	v := validator.New()
+	_ = v.RegisterValidation("isTimestamp", isTimestamp)
 
 	err := v.Struct(dto)
 	if err != nil {
