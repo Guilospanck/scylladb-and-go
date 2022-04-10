@@ -120,12 +120,10 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Insert tracking data`
 
-
-
-[Docker]: (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04)
-[Docker Compose]: (https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04)
-[Golang]: (https://go.dev/dl/)
-[govalidator]: (https://github.com/go-playground/validator)
-[gocqlx]: (https://github.com/scylladb/gocqlx)
-[gocql]: (https://github.com/scylladb/gocql)
-[ScyllaDB]: (https://www.scylladb.com/)
+[Docker]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
+[Docker Compose]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
+[Golang]: https://go.dev/dl/
+[govalidator]: https://github.com/go-playground/validator
+[gocqlx]: https://github.com/scylladb/gocqlx
+[gocql]: https://github.com/scylladb/gocql
+[ScyllaDB]: https://www.scylladb.com/
