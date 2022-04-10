@@ -6,6 +6,7 @@ import (
 	"base/pkg/infrastructure/database/entities"
 	"context"
 	"fmt"
+	"time"
 )
 
 type trackingDataRepository struct {
@@ -89,7 +90,7 @@ func trackingDataEntityToDTO(entity *entities.TrackingDataEntity) *dtos.Tracking
 	return &dtos.TrackingDataDTO{
 		FirstName:       entity.FirstName,
 		LastName:        entity.LastName,
-		Timestamp:       entity.Timestamp,
+		Timestamp:       dtos.Timestamp(entity.Timestamp),
 		Location:        entity.Location,
 		Speed:           entity.Speed,
 		Heat:            entity.Heat,
@@ -101,7 +102,7 @@ func trackingDataDTOToEntity(dto *dtos.TrackingDataDTO) *entities.TrackingDataEn
 	trackingDataEntity := &entities.TrackingDataEntity{
 		FirstName:       dto.FirstName,
 		LastName:        dto.LastName,
-		Timestamp:       dto.Timestamp,
+		Timestamp:       time.Time(dto.Timestamp),
 		Location:        dto.Location,
 		Speed:           dto.Speed,
 		Heat:            dto.Heat,
@@ -115,7 +116,7 @@ func trackingDataPrimaryKeyDTOToEntity(dto *dtos.TrackingDataPrimaryKeyDTO) *ent
 	trackingDataEntity := &entities.TrackingDataEntity{
 		FirstName: dto.FirstName,
 		LastName:  dto.LastName,
-		Timestamp: dto.Timestamp,
+		Timestamp: time.Time(dto.Timestamp),
 	}
 
 	return trackingDataEntity

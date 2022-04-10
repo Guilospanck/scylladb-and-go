@@ -20,7 +20,7 @@ func HandlerAdapter(handle func(httpserver.HttpRequest) httpserver.HttpResponse,
 		/* Read body */
 		body, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
-			logger.Error(fmt.Sprintf("[HandlerAdapter] Error while trying to read request body: %s", err))
+			logger.Error(fmt.Sprintf("[HandlerAdapter] Error while trying to read request body: %s\n", err))
 			ctx.JSON(http.StatusInternalServerError, gin.H{})
 			return
 		}

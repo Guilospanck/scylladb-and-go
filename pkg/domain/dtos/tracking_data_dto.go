@@ -3,15 +3,18 @@ package dtos
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 )
 
+type Timestamp time.Time
+
 type TrackingDataDTO struct {
 	FirstName       string    `json:"firstName" validate:"required"`
 	LastName        string    `json:"lastName" validate:"required"`
-	Timestamp       time.Time `json:"timestamp" validate:"required"`
+	Timestamp       Timestamp `json:"timestamp" validate:"required"`
 	Location        string    `json:"location"`
 	Speed           float64   `json:"speed"`
 	Heat            float64   `json:"heat"`
@@ -21,7 +24,7 @@ type TrackingDataDTO struct {
 type TrackingDataPrimaryKeyDTO struct {
 	FirstName string    `json:"firstName" validate:"required"`
 	LastName  string    `json:"lastName" validate:"required"`
-	Timestamp time.Time `json:"timestamp" validate:"required"`
+	Timestamp Timestamp `json:"timestamp" validate:"required"`
 }
 
 type TrackingDataPartitionKeyDTO struct {
@@ -29,14 +32,32 @@ type TrackingDataPartitionKeyDTO struct {
 	LastName  string `json:"lastName" validate:"required"`
 }
 
-func ParseJson(data []byte, dto interface{}, dtoName string) error {
-	err := json.Unmarshal(data, &dto)
+func (timestamp *Timestamp) UnmarshalJSON(b []byte) error {
+	value := strings.Trim(string(b), `"`)
+	if value == "" || value == "null" {
+		return nil
+	}
+
+	const timeLayout = "2006-01-02 15:04:05 -0700 MST"
+	t, err := time.Parse(timeLayout, value)
 	if err != nil {
+		return err
+	}
+
+	*timestamp = Timestamp(t)
+	return nil
+}
+
+func ParseJson(data []byte, dto interface{}, dtoName string) error {
+	err := json.Unmarshal(data, dto)
+	if err != nil {
+		fmt.Printf("[ParseJson] Error: %s", err.Error())
 		return err
 	}
 
 	err = isValid(dto, dtoName)
 	if err != nil {
+		fmt.Printf("Error:\n%s", err.Error())
 		return err
 	}
 
@@ -45,6 +66,7 @@ func ParseJson(data []byte, dto interface{}, dtoName string) error {
 
 func isValid(dto interface{}, dtoName string) error {
 	v := validator.New()
+
 	err := v.Struct(dto)
 	if err != nil {
 		return fmt.Errorf("Error during %s validation: %s", dtoName, err.Error())

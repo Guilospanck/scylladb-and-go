@@ -37,7 +37,8 @@ type trackingDataHandler struct {
 func (handler *trackingDataHandler) Create(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
 	dto := dtos.TrackingDataDTO{}
 
-	err := dtos.ParseJson(httpRequest.Body, dto, "TrackingDataDTO")
+	/* Parse and validate */
+	err := dtos.ParseJson(httpRequest.Body, &dto, "TrackingDataDTO")
 	if err != nil {
 		return handler.httpResponseFactory.BadRequest("Body must be a valid json.", nil)
 	}

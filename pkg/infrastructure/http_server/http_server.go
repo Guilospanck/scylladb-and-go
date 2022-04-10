@@ -61,7 +61,7 @@ func (server *HTTPServer) Run() error {
 
 	err := server.server.ListenAndServeTLS(certPath, keyPath)
 	if err != nil {
-		server.logger.Error(fmt.Sprintf("Error while trying to serve HTTP: %s", err.Error()))
+		server.logger.Error(fmt.Sprintf("Error while trying to serve HTTPS: %s", err.Error()))
 		return err
 	}
 
