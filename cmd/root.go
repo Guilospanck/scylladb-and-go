@@ -15,5 +15,7 @@ func Execute() error {
 		return err
 	}
 
+	defer container.dbSession.Close()
+
 	return nil
 }

@@ -22,7 +22,7 @@ func (queryBuilder *queryBuilder[T]) Insert(ctx context.Context, insertData *T) 
 	insertStatement, insertNames := queryBuilder.model.Insert()
 	insertQuery := queryBuilder.session.Query(insertStatement, insertNames).WithContext(ctx)
 
-	err := insertQuery.BindStruct(insertData).WithContext(ctx).ExecRelease()
+	err := insertQuery.BindStruct(insertData).ExecRelease()
 	if err != nil {
 		queryBuilder.logger.Error(fmt.Sprintf("Insert() error %s", err.Error()))
 		return err

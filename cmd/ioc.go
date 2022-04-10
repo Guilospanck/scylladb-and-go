@@ -16,11 +16,13 @@ import (
 	"strings"
 
 	"github.com/gocql/gocql"
+	"github.com/scylladb/gocqlx/v2"
 )
 
 type Container struct {
 	httpServer        httpserver.IHTTPServer
 	trackingPresenter presenters.IRoutes
+	dbSession         *gocqlx.Session
 }
 
 func NewContainer() *Container {
@@ -36,7 +38,6 @@ func NewContainer() *Container {
 	if err != nil {
 		panic(err)
 	}
-	defer session.Close()
 
 	/* Query Builder */
 	trackingModel := models.NewTrackingDataTable().Table
@@ -64,5 +65,6 @@ func NewContainer() *Container {
 	return &Container{
 		httpServer:        httpServer,
 		trackingPresenter: trackingPresenter,
+		dbSession:         session,
 	}
 }
