@@ -1,7 +1,10 @@
 package main
 
-import "base/cmd"
+import (
+	"base/cmd"
+	"log"
+)
 
 func main() {
-	cmd.Execute()
+	log.Fatal(cmd.Execute())
 }

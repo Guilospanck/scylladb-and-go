@@ -5,7 +5,15 @@ import (
 )
 
 func Execute() error {
-	NewContainer()
+	container := NewContainer()
+
+	container.httpServer.Setup()
+
+	container.trackingPresenter.Register(container.httpServer)
+
+	if err := container.httpServer.Run(); err != nil {
+		return err
+	}
 
 	return nil
 }
