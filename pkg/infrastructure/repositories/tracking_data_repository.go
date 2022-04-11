@@ -53,7 +53,11 @@ func (repo *trackingDataRepository) FindTrackingDataByPrimaryKey(ctx context.Con
 		return nil, err
 	}
 
-	return trackingDataEntityToDTO(result), err
+	if result == nil {
+		return nil, nil
+	}
+
+	return trackingDataEntityToDTO(result), nil
 }
 
 func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(ctx context.Context, trackingData *dtos.TrackingDataPartitionKeyDTO) ([]*dtos.TrackingDataDTO, error) {
@@ -61,6 +65,10 @@ func (repo *trackingDataRepository) FindAllTrackingDataByPartitionKey(ctx contex
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not find all tracking data by partition key. Error:  %s", err.Error()))
 		return nil, err
+	}
+
+	if results == nil {
+		return nil, nil
 	}
 
 	var arrayOfResults []*dtos.TrackingDataDTO
@@ -77,6 +85,10 @@ func (repo *trackingDataRepository) FindAllTrackingData(ctx context.Context) ([]
 	if err != nil {
 		repo.logger.Error(fmt.Sprintf("Could not find all tracking data. Error:  %s", err.Error()))
 		return nil, err
+	}
+
+	if results == nil {
+		return nil, nil
 	}
 
 	var arrayOfResults []*dtos.TrackingDataDTO
