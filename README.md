@@ -133,6 +133,18 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Delete tracking data by Primary Key`
 
+- Delete all tracking data by Parition Key
+  - curl
+    ```bash
+    curl --location --request DELETE 'https://localhost:4444/api/v1/tracking/bypartition' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "firstName": "Post",
+        "lastName": "Test"
+    }'
+    ```
+  - Insomnia: run `Delete all tracking data by Partition Key`
+
 [Docker]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
 [Docker Compose]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
 [Golang]: https://go.dev/dl/

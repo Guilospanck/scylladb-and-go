@@ -19,6 +19,7 @@ type trackingDataPresenter struct {
 func (presenter *trackingDataPresenter) Register(httpServer httpserver.IHTTPServer) {
 	httpServer.RegisterRoute("POST", "/api/v1/tracking", adapters.HandlerAdapter(presenter.handler.Create, presenter.logger))
 	httpServer.RegisterRoute("DELETE", "/api/v1/tracking", adapters.HandlerAdapter(presenter.handler.DeleteByPrimaryKey, presenter.logger))
+	httpServer.RegisterRoute("DELETE", "/api/v1/tracking/bypartition", adapters.HandlerAdapter(presenter.handler.DeleteAllByPartitionKey, presenter.logger))
 }
 
 func NewTrackingDataPresenters(logger interfaces.ILogger, handler handlers.ITrackingDataHandler) *trackingDataPresenter {

@@ -49,6 +49,7 @@ func NewContainer() *Container {
 	/* Use cases */
 	createTrackingDataUsecase := usecases.NewCreateTrackingDataUsecase(trackingDataRepo)
 	deleteTrackingDataByPrimaryKeyUsecase := usecases.NewDeleteTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
+	deleteTrackingDataByPartitionKeyUsecase := usecases.NewDeleteTrackingDataByPartitionKeyUsecase(trackingDataRepo)
 	// findTrackingDataByPrimaryKey := usecases.NewFindTrackingDataByPrimaryKeyUsecase(trackingDataRepo)
 	// findAllTrackingDataByPartitionKey := usecases.NewFindAllTrackingDataByPartitionKeyUsecase(trackingDataRepo)
 	// findAllTrackingData := usecases.NewFindAllTrackingDataUsecase(trackingDataRepo)
@@ -58,7 +59,7 @@ func NewContainer() *Container {
 
 	/* Handlers */
 	trackingHandler := handlers.NewTrackingDataHandler(logger, createTrackingDataUsecase,
-		deleteTrackingDataByPrimaryKeyUsecase)
+		deleteTrackingDataByPrimaryKeyUsecase, deleteTrackingDataByPartitionKeyUsecase)
 
 	/* Routes (Presenters) */
 	trackingPresenter := presenters.NewTrackingDataPresenters(logger, trackingHandler)
