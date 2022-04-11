@@ -103,7 +103,10 @@ type IQueryBuilder[t T] interface {
 You can use either the simple `curl` function or the `Insomnia` program.
 > If using Insomnia, be sure to go to Applications > Preferences and then uncheck "Validate certificates" under "Request/Response" section. This is needed in order to make requests to the HTTPS localhost.
 
-- Insert tracking data
+## POST /api/v1/tracking
+Endpoint used to insert tracking data.
+
+:arrow_right: Request
   - curl
     ```bash
     curl --location --request POST 'https://localhost:4444/api/v1/tracking' \
@@ -120,7 +123,10 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Insert tracking data`
 
-- Delete tracking data by Primary Key (Partition Key + Clustering Key)
+## DELETE /api/v1/tracking
+Endpoint used to delete tracking data by Primary Key (Partition Key + Clustering Key).
+
+:arrow_right: Request
   - curl
     ```bash
     curl --location --request DELETE 'https://localhost:4444/api/v1/tracking' \
@@ -133,7 +139,10 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Delete tracking data by Primary Key`
 
-- Delete all tracking data by Partition Key
+## DELETE /api/v1/tracking/bypartition
+Endpoint used to delete tracking data by Partition Key.
+
+:arrow_right: Request
   - curl
     ```bash
     curl --location --request DELETE 'https://localhost:4444/api/v1/tracking/bypartition' \
@@ -145,7 +154,10 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Delete all tracking data by Partition Key`
 
-- Get tracking data by Primary Key
+## GET /api/v1/tracking
+Endpoint used to get tracking data by Primary Key.
+
+:arrow_right: Request
   - curl
     ```bash
     curl --location --request GET 'https://localhost:4444/api/v1/tracking' \
@@ -158,7 +170,10 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Get by Primary Key`
 
-- Get all tracking data by Partition Key
+## GET /api/v1/tracking/bypartition
+Endpoint used to get tracking data by Partition Key.
+
+:arrow_right: Request
   - curl
     ```bash
     curl --location --request GET 'https://localhost:4444/api/v1/tracking/bypartition' \
@@ -170,7 +185,10 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Get All by Partition Key`
 
-- Get all tracking data
+## GET /api/v1/tracking/all
+Endpoint used to get all tracking data.
+
+:arrow_right: Request
   - curl
     ```bash
     curl --location --request GET 'https://localhost:4444/api/v1/tracking/all'

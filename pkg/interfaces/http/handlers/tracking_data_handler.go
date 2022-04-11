@@ -50,7 +50,6 @@ func (handler *trackingDataHandler) Create(httpRequest httpserver.HttpRequest) h
 	}
 
 	return handler.httpResponseFactory.Created(result, nil)
-
 }
 
 func (handler *trackingDataHandler) DeleteByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
