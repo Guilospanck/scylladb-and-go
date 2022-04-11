@@ -170,6 +170,13 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Get All by Partition Key`
 
+- Get all tracking data
+  - curl
+    ```bash
+    curl --location --request GET 'https://localhost:4444/api/v1/tracking/all'
+    ```
+  - Insomnia: run `Get All`
+
 [Docker]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
 [Docker Compose]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
 [Golang]: https://go.dev/dl/

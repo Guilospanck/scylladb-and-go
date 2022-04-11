@@ -17,7 +17,7 @@ type ITrackingDataHandler interface {
 	DeleteAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	GetByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	GetByAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
-	// GetAll(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
+	GetAll(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 }
 
 type trackingDataHandler struct {
@@ -31,7 +31,7 @@ type trackingDataHandler struct {
 
 	findByPrimaryKey      usecases.IFindTrackingDataByPrimaryKeyUsecase
 	findAllByPartitionKey usecases.IFindAllTrackingDataByPartitionKeyUsecase
-	// findAll               usecases.IFindAllTrackingDataUsecase
+	findAll               usecases.IFindAllTrackingDataUsecase
 }
 
 func (handler *trackingDataHandler) Create(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
@@ -115,20 +115,31 @@ func (handler *trackingDataHandler) GetByAllByPartitionKey(httpRequest httpserve
 	}
 
 	/* usecase */
-	result, err := handler.findAllByPartitionKey.Perform(httpRequest.Ctx, dto)
+	results, err := handler.findAllByPartitionKey.Perform(httpRequest.Ctx, dto)
 	if err != nil {
 		return handler.httpResponseFactory.ErrorResponseMapper(err, nil)
 	}
 
-	if result == nil {
+	if results == nil {
 		return handler.httpResponseFactory.NoContent(nil)
 	}
 
-	return handler.httpResponseFactory.Ok(result, nil)
+	return handler.httpResponseFactory.Ok(results, nil)
 }
 
-// func (handler *trackingDataHandler) GetAll(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
-// }
+func (handler *trackingDataHandler) GetAll(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
+	/* usecase */
+	results, err := handler.findAll.Perform(httpRequest.Ctx)
+	if err != nil {
+		return handler.httpResponseFactory.ErrorResponseMapper(err, nil)
+	}
+
+	if results == nil {
+		return handler.httpResponseFactory.NoContent(nil)
+	}
+
+	return handler.httpResponseFactory.Ok(results, nil)
+}
 
 func NewTrackingDataHandler(
 	logger interfaces.ILogger, createUsecase usecases.ICreateTrackingDataUsecase,
@@ -136,7 +147,7 @@ func NewTrackingDataHandler(
 	deleteAllByPartitionKey usecases.IDeleteTrackingDataByPartitionKeyUsecase,
 	findByPrimaryKey usecases.IFindTrackingDataByPrimaryKeyUsecase,
 	findAllByPartitionKey usecases.IFindAllTrackingDataByPartitionKeyUsecase,
-	// findAll usecases.IFindAllTrackingDataUsecase,
+	findAll usecases.IFindAllTrackingDataUsecase,
 ) *trackingDataHandler {
 
 	httpResponseFactory := factories.NewHttpResponseFactory()
@@ -149,6 +160,6 @@ func NewTrackingDataHandler(
 		deleteAllByPartitionKey,
 		findByPrimaryKey,
 		findAllByPartitionKey,
-		// findAll,
+		findAll,
 	}
 }
