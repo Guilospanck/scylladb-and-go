@@ -21,6 +21,7 @@ func (presenter *trackingDataPresenter) Register(httpServer httpserver.IHTTPServ
 	httpServer.RegisterRoute("DELETE", "/api/v1/tracking", adapters.HandlerAdapter(presenter.handler.DeleteByPrimaryKey, presenter.logger))
 	httpServer.RegisterRoute("DELETE", "/api/v1/tracking/bypartition", adapters.HandlerAdapter(presenter.handler.DeleteAllByPartitionKey, presenter.logger))
 	httpServer.RegisterRoute("GET", "/api/v1/tracking", adapters.HandlerAdapter(presenter.handler.GetByPrimaryKey, presenter.logger))
+	httpServer.RegisterRoute("GET", "/api/v1/tracking/bypartition", adapters.HandlerAdapter(presenter.handler.GetByAllByPartitionKey, presenter.logger))
 }
 
 func NewTrackingDataPresenters(logger interfaces.ILogger, handler handlers.ITrackingDataHandler) *trackingDataPresenter {

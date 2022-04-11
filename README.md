@@ -158,6 +158,18 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Get by Primary Key`
 
+- Get all tracking data by Partition Key
+  - curl
+    ```bash
+    curl --location --request GET 'https://localhost:4444/api/v1/tracking/bypartition' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "firstName": "Post",
+        "lastName": "Test"
+    }'
+    ```
+  - Insomnia: run `Get All by Partition Key`
+
 [Docker]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
 [Docker Compose]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
 [Golang]: https://go.dev/dl/

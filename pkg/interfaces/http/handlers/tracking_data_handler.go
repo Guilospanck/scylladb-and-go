@@ -16,7 +16,7 @@ type ITrackingDataHandler interface {
 	DeleteByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	DeleteAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	GetByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
-	// GetByAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
+	GetByAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	// GetAll(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 }
 
@@ -29,8 +29,8 @@ type trackingDataHandler struct {
 	deleteByPrimaryKey      usecases.IDeleteTrackingDataByPrimaryKeyUsecase
 	deleteAllByPartitionKey usecases.IDeleteTrackingDataByPartitionKeyUsecase
 
-	findByPrimaryKey usecases.IFindTrackingDataByPrimaryKeyUsecase
-	// findAllByPartitionKey usecases.IFindAllTrackingDataByPartitionKeyUsecase
+	findByPrimaryKey      usecases.IFindTrackingDataByPrimaryKeyUsecase
+	findAllByPartitionKey usecases.IFindAllTrackingDataByPartitionKeyUsecase
 	// findAll               usecases.IFindAllTrackingDataUsecase
 }
 
@@ -106,8 +106,26 @@ func (handler *trackingDataHandler) GetByPrimaryKey(httpRequest httpserver.HttpR
 	return handler.httpResponseFactory.Ok(result, nil)
 }
 
-// func (handler *trackingDataHandler) GetByAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
-// }
+func (handler *trackingDataHandler) GetByAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
+	dto := dtos.TrackingDataPartitionKeyDTO{}
+
+	/* Parse json and validate struct */
+	if err := dtos.ParseJson(httpRequest.Body, &dto, "TrackingDataPartitionKeyDTO"); err != nil {
+		return handler.httpResponseFactory.BadRequest("Body must be a valid json.", nil)
+	}
+
+	/* usecase */
+	result, err := handler.findAllByPartitionKey.Perform(httpRequest.Ctx, dto)
+	if err != nil {
+		return handler.httpResponseFactory.ErrorResponseMapper(err, nil)
+	}
+
+	if result == nil {
+		return handler.httpResponseFactory.NoContent(nil)
+	}
+
+	return handler.httpResponseFactory.Ok(result, nil)
+}
 
 // func (handler *trackingDataHandler) GetAll(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
 // }
@@ -117,7 +135,7 @@ func NewTrackingDataHandler(
 	deleteByPrimaryKey usecases.IDeleteTrackingDataByPrimaryKeyUsecase,
 	deleteAllByPartitionKey usecases.IDeleteTrackingDataByPartitionKeyUsecase,
 	findByPrimaryKey usecases.IFindTrackingDataByPrimaryKeyUsecase,
-	// findAllByPartitionKey usecases.IFindAllTrackingDataByPartitionKeyUsecase,
+	findAllByPartitionKey usecases.IFindAllTrackingDataByPartitionKeyUsecase,
 	// findAll usecases.IFindAllTrackingDataUsecase,
 ) *trackingDataHandler {
 
@@ -130,7 +148,7 @@ func NewTrackingDataHandler(
 		deleteByPrimaryKey,
 		deleteAllByPartitionKey,
 		findByPrimaryKey,
-		// findAllByPartitionKey,
+		findAllByPartitionKey,
 		// findAll,
 	}
 }
