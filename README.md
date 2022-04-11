@@ -120,6 +120,19 @@ You can use either the simple `curl` function or the `Insomnia` program.
     ```
   - Insomnia: run `Insert tracking data`
 
+- Delete tracking data by Primary Key (Partition Key + Clustering Key)
+  - curl
+    ```bash
+    curl --location --request DELETE 'https://localhost:4444/api/v1/tracking' \
+    --header 'Content-Type: application/json' \
+    --data-raw '{
+        "firstName": "Post",
+        "lastName": "Test",
+        "timestamp": "2022-04-10 09:10:00 +0000 UTC"
+    }'
+    ```
+  - Insomnia: run `Delete tracking data by Primary Key`
+
 [Docker]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-20-04
 [Docker Compose]: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04
 [Golang]: https://go.dev/dl/
