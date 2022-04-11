@@ -13,7 +13,7 @@ import (
 
 type ITrackingDataHandler interface {
 	Create(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
-	// DeleteByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
+	DeleteByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	// DeleteAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	// GetByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
 	// GetByAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse
@@ -26,7 +26,7 @@ type trackingDataHandler struct {
 
 	createUsecase usecases.ICreateTrackingDataUsecase
 
-	// deleteByPrimaryKey      usecases.IDeleteTrackingDataByPrimaryKeyUsecase
+	deleteByPrimaryKey usecases.IDeleteTrackingDataByPrimaryKeyUsecase
 	// deleteAllByPartitionKey usecases.IDeleteTrackingDataByPartitionKeyUsecase
 
 	// findByPrimaryKey      usecases.IFindTrackingDataByPrimaryKeyUsecase
@@ -53,8 +53,22 @@ func (handler *trackingDataHandler) Create(httpRequest httpserver.HttpRequest) h
 
 }
 
-// func (handler *trackingDataHandler) DeleteByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
-// }
+func (handler *trackingDataHandler) DeleteByPrimaryKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
+	dto := dtos.TrackingDataPrimaryKeyDTO{}
+
+	/* Parse json */
+	if err := dtos.ParseJson(httpRequest.Body, &dto, "TrackingDataPrimaryKeyDTO"); err != nil {
+		return handler.httpResponseFactory.BadRequest("Body must be a valid json.", nil)
+	}
+
+	/* usecase */
+	if err := handler.deleteByPrimaryKey.Perform(httpRequest.Ctx, dto); err != nil {
+		return handler.httpResponseFactory.ErrorResponseMapper(err, nil)
+	}
+
+	return handler.httpResponseFactory.Ok(nil, nil)
+
+}
 
 // func (handler *trackingDataHandler) DeleteAllByPartitionKey(httpRequest httpserver.HttpRequest) httpserver.HttpResponse {
 // }
@@ -70,7 +84,7 @@ func (handler *trackingDataHandler) Create(httpRequest httpserver.HttpRequest) h
 
 func NewTrackingDataHandler(
 	logger interfaces.ILogger, createUsecase usecases.ICreateTrackingDataUsecase,
-	// deleteByPrimaryKey usecases.IDeleteTrackingDataByPrimaryKeyUsecase,
+	deleteByPrimaryKey usecases.IDeleteTrackingDataByPrimaryKeyUsecase,
 	// deleteAllByPartitionKey usecases.IDeleteTrackingDataByPartitionKeyUsecase,
 	// findByPrimaryKey usecases.IFindTrackingDataByPrimaryKeyUsecase,
 	// findAllByPartitionKey usecases.IFindAllTrackingDataByPartitionKeyUsecase,
@@ -83,7 +97,7 @@ func NewTrackingDataHandler(
 		logger,
 		httpResponseFactory,
 		createUsecase,
-		// deleteByPrimaryKey,
+		deleteByPrimaryKey,
 		// deleteAllByPartitionKey,
 		// findByPrimaryKey,
 		// findAllByPartitionKey,
