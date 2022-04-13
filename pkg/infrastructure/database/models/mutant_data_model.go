@@ -1,19 +1,24 @@
 package models
 
-import "github.com/scylladb/gocqlx/v2/table"
+import (
+	igocqlxtable "github.com/Guilospanck/igocqlx/table"
+	"github.com/scylladb/gocqlx/v2/table"
+)
 
 type MutantDataTable struct {
-	Table *table.Table
+	Table igocqlxtable.ITable
 }
 
 func NewMutantDataTable() *MutantDataTable {
-	mutantDataMetadata := table.Metadata{
-		Name:    "mutant_data",
-		Columns: []string{"first_name", "last_name", "address", "picture_location"},
-		PartKey: []string{"first_name", "last_name"},
+	mutantDataMetadata := igocqlxtable.Metadata{
+		M: &table.Metadata{
+			Name:    "mutant_data",
+			Columns: []string{"first_name", "last_name", "address", "picture_location"},
+			PartKey: []string{"first_name", "last_name"},
+		},
 	}
 
-	mutantDataTable := table.New(mutantDataMetadata)
+	mutantDataTable := igocqlxtable.New(*mutantDataMetadata.M)
 
 	return &MutantDataTable{
 		Table: mutantDataTable,

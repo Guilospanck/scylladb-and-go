@@ -15,14 +15,14 @@ import (
 	"os"
 	"strings"
 
+	"github.com/Guilospanck/igocqlx"
 	"github.com/gocql/gocql"
-	"github.com/scylladb/gocqlx/v2"
 )
 
 type Container struct {
 	httpServer        httpserver.IHTTPServer
 	trackingPresenter presenters.IRoutes
-	dbSession         *gocqlx.Session
+	dbSession         igocqlx.ISessionx
 }
 
 func NewContainer() *Container {

@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/Guilospanck/igocqlx"
 	"github.com/gocql/gocql"
-	"github.com/scylladb/gocqlx/v2"
 )
 
 type scyllaDBConnection struct {
@@ -33,14 +33,14 @@ func (conn *scyllaDBConnection) createCluster() *gocql.ClusterConfig {
 	return cluster
 }
 
-func (conn *scyllaDBConnection) createSession(cluster *gocql.ClusterConfig) (*gocqlx.Session, error) {
-	session, err := gocqlx.WrapSession(cluster.CreateSession())
+func (conn *scyllaDBConnection) createSession(cluster *gocql.ClusterConfig) (igocqlx.ISessionx, error) {
+	session, err := igocqlx.WrapSession(cluster.CreateSession())
 	if err != nil {
 		conn.logger.Error(fmt.Sprintf("An error occurred while creating DB session: %s", err.Error()))
 		return nil, err
 	}
 
-	return &session, nil
+	return session, nil
 }
 
 func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, logger interfaces.ILogger, hosts ...string) *scyllaDBConnection {
@@ -52,7 +52,7 @@ func NewScyllaDBConnection(consistency gocql.Consistency, keyspace string, logge
 	}
 }
 
-func GetConnection(connection *scyllaDBConnection, logger interfaces.ILogger) (*gocqlx.Session, error) {
+func GetConnection(connection *scyllaDBConnection, logger interfaces.ILogger) (igocqlx.ISessionx, error) {
 	cluster := connection.createCluster()
 	return connection.createSession(cluster)
 }

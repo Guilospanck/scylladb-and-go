@@ -5,13 +5,13 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/scylladb/gocqlx/v2"
-	"github.com/scylladb/gocqlx/v2/table"
+	"github.com/Guilospanck/igocqlx"
+	igocqlxtable "github.com/Guilospanck/igocqlx/table"
 )
 
 type queryBuilder[T any] struct {
-	model   *table.Table
-	session *gocqlx.Session
+	model   igocqlxtable.ITable
+	session igocqlx.ISessionx
 	logger  interfaces.ILogger
 }
 
@@ -48,9 +48,9 @@ func (queryBuilder *queryBuilder[T]) Delete(ctx context.Context, dataToBeDeleted
 }
 
 func (queryBuilder *queryBuilder[T]) DeleteAllFromPartitioningKey(ctx context.Context, dataToBeDeleted *T) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE ", queryBuilder.model.Metadata().Name)
+	query := fmt.Sprintf("DELETE FROM %s WHERE ", queryBuilder.model.Metadata().M.Name)
 
-	for index, value := range queryBuilder.model.Metadata().PartKey {
+	for index, value := range queryBuilder.model.Metadata().M.PartKey {
 		if index == 0 {
 			query += fmt.Sprintf("%s=? ", value)
 			continue
@@ -59,7 +59,7 @@ func (queryBuilder *queryBuilder[T]) DeleteAllFromPartitioningKey(ctx context.Co
 		query += fmt.Sprintf("AND %s=?", value)
 	}
 
-	deleteQuery := queryBuilder.session.Query(query, queryBuilder.model.Metadata().PartKey).WithContext(ctx)
+	deleteQuery := queryBuilder.session.Query(query, queryBuilder.model.Metadata().M.PartKey).WithContext(ctx)
 
 	err := deleteQuery.BindStruct(dataToBeDeleted).WithContext(ctx).ExecRelease()
 	if err != nil {
@@ -125,7 +125,7 @@ func (queryBuilder *queryBuilder[T]) SelectAll(ctx context.Context) ([]T, error)
 	return results, nil
 }
 
-func NewQueryBuider[T any](model *table.Table, session *gocqlx.Session, logger interfaces.ILogger) *queryBuilder[T] {
+func NewQueryBuider[T any](model igocqlxtable.ITable, session igocqlx.ISessionx, logger interfaces.ILogger) *queryBuilder[T] {
 	return &queryBuilder[T]{
 		model,
 		session,

@@ -1,6 +1,6 @@
 package models
 
-import "github.com/scylladb/gocqlx/v2/table"
+import "github.com/Guilospanck/igocqlx/table"
 
 type TrackingDataTable struct {
 	Table *table.Table
