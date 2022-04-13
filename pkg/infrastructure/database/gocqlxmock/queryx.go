@@ -3,34 +3,11 @@ package gocqlxmock
 import (
 	"context"
 
+	"github.com/Guilospanck/igocqlx"
 	"github.com/gocql/gocql"
+	"github.com/scylladb/gocqlx/v2"
 	"github.com/stretchr/testify/mock"
 )
-
-type Transformer func(name string, val interface{}) interface{}
-
-type IQueryx interface {
-	WithBindTransformer(tr Transformer) IQueryx
-	WithContext(ctx context.Context) IQueryx
-	BindStruct(arg interface{}) IQueryx
-	BindStructMap(arg0 interface{}, arg1 map[string]interface{}) IQueryx
-	bindStructArgs(arg0 interface{}, arg1 map[string]interface{}) ([]interface{}, error)
-	BindMap(arg map[string]interface{}) IQueryx
-	bindMapArgs(arg map[string]interface{}) ([]interface{}, error)
-	Bind(v ...interface{}) IQueryx
-	Err() error
-	Exec() error
-	ExecRelease() error
-	ExecCAS() (applied bool, err error)
-	ExecCASRelease() (bool, error)
-	Get(dest interface{}) error
-	GetRelease(dest interface{}) error
-	GetCAS(dest interface{}) (applied bool, err error)
-	GetCASRelease(dest interface{}) (bool, error)
-	Select(dest interface{}) error
-	SelectRelease(dest interface{}) error
-	Iter() IIterx
-}
 
 type QueryxMock struct {
 	mock.Mock
@@ -39,46 +16,34 @@ type QueryxMock struct {
 	Names []string
 }
 
-func (mock QueryxMock) WithBindTransformer(tr Transformer) IQueryx {
+func (mock QueryxMock) WithBindTransformer(tr gocqlx.Transformer) igocqlx.IQueryx {
 	args := mock.Called(tr)
 
-	return args.Get(0).(IQueryx)
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (mock QueryxMock) BindStruct(arg interface{}) IQueryx {
+func (mock QueryxMock) BindStruct(arg interface{}) igocqlx.IQueryx {
 	args := mock.Called(arg)
 
-	return args.Get(0).(IQueryx)
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (mock QueryxMock) BindStructMap(arg0 interface{}, arg1 map[string]interface{}) IQueryx {
+func (mock QueryxMock) BindStructMap(arg0 interface{}, arg1 map[string]interface{}) igocqlx.IQueryx {
 	args := mock.Called(arg0, arg1)
 
-	return args.Get(0).(IQueryx)
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (mock QueryxMock) bindStructArgs(arg0 interface{}, arg1 map[string]interface{}) ([]interface{}, error) {
-	args := mock.Called(arg0, arg1)
-
-	return args.Get(0).([]interface{}), args.Error(1)
-}
-
-func (mock QueryxMock) BindMap(arg map[string]interface{}) IQueryx {
+func (mock QueryxMock) BindMap(arg map[string]interface{}) igocqlx.IQueryx {
 	args := mock.Called(arg)
 
-	return args.Get(0).(IQueryx)
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (mock QueryxMock) bindMapArgs(arg map[string]interface{}) ([]interface{}, error) {
-	args := mock.Called(arg)
-
-	return args.Get(0).([]interface{}), args.Error(1)
-}
-
-func (mock QueryxMock) Bind(v ...interface{}) IQueryx {
+func (mock QueryxMock) Bind(v ...interface{}) igocqlx.IQueryx {
 	args := mock.Called(v)
 
-	return args.Get(0).(IQueryx)
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
 func (mock QueryxMock) Err() error {
@@ -147,106 +112,114 @@ func (mock QueryxMock) SelectRelease(dest interface{}) error {
 	return args.Error(0)
 }
 
-func (mock QueryxMock) Iter() IIterx {
+func (mock QueryxMock) Iter() igocqlx.IIterx {
 	args := mock.Called()
 
-	return args.Get(0).(IIterx)
+	return args.Get(0).(igocqlx.IIterx)
 }
 
-func (mock QueryxMock) WithContext(ctx context.Context) IQueryx {
+func (mock QueryxMock) Consistency(c gocql.Consistency) igocqlx.IQueryx {
+	args := mock.Called(c)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) CustomPayload(customPayload map[string][]byte) igocqlx.IQueryx {
+	args := mock.Called(customPayload)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) Trace(trace gocql.Tracer) igocqlx.IQueryx {
+	args := mock.Called(trace)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) Observer(observer gocql.QueryObserver) igocqlx.IQueryx {
+	args := mock.Called(observer)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) PageSize(n int) igocqlx.IQueryx {
+	args := mock.Called(n)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) DefaultTimestamp(enable bool) igocqlx.IQueryx {
+	args := mock.Called(enable)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) WithTimestamp(timestamp int64) igocqlx.IQueryx {
+	args := mock.Called(timestamp)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) RoutingKey(routingKey []byte) igocqlx.IQueryx {
+	args := mock.Called(routingKey)
+
+	return args.Get(0).(igocqlx.IQueryx)
+}
+
+func (mock QueryxMock) WithContext(ctx context.Context) igocqlx.IQueryx {
 	args := mock.Called(ctx)
 
-	return args.Get(0).(IQueryx)
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-// "Interface assertion"
-var (
-	_ IQueryx = QueryxMock{}
-	_ IQueryx = queryx{}
-)
+func (mock QueryxMock) Prefetch(p float64) igocqlx.IQueryx {
+	args := mock.Called(p)
 
-type queryx struct {
-	q *gocql.Query
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (q queryx) WithBindTransformer(tr Transformer) IQueryx {
-	return q
+func (mock QueryxMock) RetryPolicy(r gocql.RetryPolicy) igocqlx.IQueryx {
+	args := mock.Called(r)
+
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (q queryx) BindStruct(arg interface{}) IQueryx {
-	return q
+func (mock QueryxMock) SetSpeculativeExecutionPolicy(sp gocql.SpeculativeExecutionPolicy) igocqlx.IQueryx {
+	args := mock.Called(sp)
+
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (q queryx) BindStructMap(arg0 interface{}, arg1 map[string]interface{}) IQueryx {
-	return q
+func (mock QueryxMock) Idempotent(value bool) igocqlx.IQueryx {
+	args := mock.Called(value)
+
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (q queryx) bindStructArgs(arg0 interface{}, arg1 map[string]interface{}) ([]interface{}, error) {
-	return nil, nil
+func (mock QueryxMock) SerialConsistency(cons gocql.SerialConsistency) igocqlx.IQueryx {
+	args := mock.Called(cons)
+
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (q queryx) BindMap(arg map[string]interface{}) IQueryx {
-	return q
+func (mock QueryxMock) PageState(state []byte) igocqlx.IQueryx {
+	args := mock.Called(state)
+
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (q queryx) bindMapArgs(arg map[string]interface{}) ([]interface{}, error) {
-	return nil, nil
+func (mock QueryxMock) NoSkipMetadata() igocqlx.IQueryx {
+	args := mock.Called()
+
+	return args.Get(0).(igocqlx.IQueryx)
 }
 
-func (q queryx) Bind(v ...interface{}) IQueryx {
-	return q
+func (mock QueryxMock) Release() {
+	mock.Called()
 }
 
-func (q queryx) Err() error {
-	return nil
-}
+func (mock QueryxMock) Scan(dest ...interface{}) error {
+	args := mock.Called(dest...)
 
-func (q queryx) Exec() error {
-	return nil
-}
-
-func (q queryx) ExecRelease() error {
-	return nil
-}
-
-func (q queryx) ExecCAS() (applied bool, err error) {
-	return true, nil
-}
-
-func (q queryx) ExecCASRelease() (bool, error) {
-	return true, nil
-}
-
-func (q queryx) Get(dest interface{}) error {
-	return nil
-}
-
-func (q queryx) GetRelease(dest interface{}) error {
-	return nil
-}
-
-func (q queryx) GetCAS(dest interface{}) (applied bool, err error) {
-	return true, nil
-}
-
-func (q queryx) GetCASRelease(dest interface{}) (bool, error) {
-	return true, nil
-}
-
-func (q queryx) Select(dest interface{}) error {
-	return nil
-}
-
-func (q queryx) SelectRelease(dest interface{}) error {
-	return nil
-}
-
-func (q queryx) Iter() IIterx {
-	return iterx{
-		i: q.q.Iter(),
-	}
-}
-
-func (q queryx) WithContext(ctx context.Context) IQueryx {
-	return q
+	return args.Error(0)
 }
