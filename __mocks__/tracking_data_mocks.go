@@ -2,6 +2,7 @@ package mocks
 
 import (
 	"base/pkg/domain/dtos"
+	"base/pkg/infrastructure/database/entities"
 	"time"
 )
 
@@ -9,23 +10,33 @@ var (
 	timeLayout   = "2006-01-02 15:04:05 -0700 MST"
 	timestamp, _ = time.Parse(timeLayout, "2017-11-11 12:05:00 +0000 UTC")
 
-	CompleteData = dtos.TrackingDataDTO{
+	CompleteDataEntity = entities.TrackingDataEntity{
 		FirstName:       "Guilherme",
 		LastName:        "Rodrigues",
-		Timestamp:       time.Now(),
+		Timestamp:       timestamp,
 		Location:        "Brazil",
 		Speed:           50.5,
 		Heat:            40,
 		TelepathyPowers: 10,
 	}
 
-	PrimaryKeyData = dtos.TrackingDataPrimaryKeyDTO{
-		FirstName: "Jim",
-		LastName:  "Jeffries",
-		Timestamp: timestamp,
+	CompleteDataDTO = dtos.TrackingDataDTO{
+		FirstName:       "Guilherme",
+		LastName:        "Rodrigues",
+		Timestamp:       timestamp.String(),
+		Location:        "Brazil",
+		Speed:           50.5,
+		Heat:            40,
+		TelepathyPowers: 10,
 	}
 
-	PartitionKeyData = dtos.TrackingDataPartitionKeyDTO{
+	PrimaryKeyDataDTO = dtos.TrackingDataPrimaryKeyDTO{
+		FirstName: "Jim",
+		LastName:  "Jeffries",
+		Timestamp: timestamp.String(),
+	}
+
+	PartitionKeyDataDTO = dtos.TrackingDataPartitionKeyDTO{
 		FirstName: "Jim",
 		LastName:  "Jeffries",
 	}

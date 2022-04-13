@@ -1,23 +1,28 @@
 package models
 
-import "github.com/Guilospanck/igocqlx/table"
+import (
+	igocqlxtable "github.com/Guilospanck/igocqlx/table"
+	"github.com/scylladb/gocqlx/v2/table"
+)
 
 type TrackingDataTable struct {
-	Table *table.Table
+	Table igocqlxtable.ITable
 }
 
 func NewTrackingDataTable() *TrackingDataTable {
-	trackingDataMetadata := table.Metadata{
-		Name: "tracking_data",
-		Columns: []string{
-			"first_name", "last_name", "timestamp", "heat",
-			"location", "speed", "telepathy_powers",
+	trackingDataMetadata := igocqlxtable.Metadata{
+		M: &table.Metadata{
+			Name: "tracking_data",
+			Columns: []string{
+				"first_name", "last_name", "timestamp", "heat",
+				"location", "speed", "telepathy_powers",
+			},
+			PartKey: []string{"first_name", "last_name"},
+			SortKey: []string{"timestamp"},
 		},
-		PartKey: []string{"first_name", "last_name"},
-		SortKey: []string{"timestamp"},
 	}
 
-	trackingDataTable := table.New(trackingDataMetadata)
+	trackingDataTable := igocqlxtable.New(*trackingDataMetadata.M)
 
 	return &TrackingDataTable{
 		Table: trackingDataTable,

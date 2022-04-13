@@ -3,9 +3,11 @@ module base
 go 1.18
 
 require (
+	github.com/Guilospanck/gocqlxmock v1.0.0
 	github.com/Guilospanck/igocqlx v0.0.7
 	github.com/go-playground/validator/v10 v10.10.1
 	github.com/gocql/gocql v1.0.0
+	github.com/scylladb/gocqlx/v2 v2.7.0
 	github.com/stretchr/testify v1.7.1
 	go.uber.org/zap v1.21.0
 )
@@ -23,7 +25,6 @@ require (
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/scylladb/gocqlx/v2 v2.7.0 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/ugorji/go/codec v1.2.7 // indirect
 	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4 // indirect
@@ -39,7 +40,6 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/hailocab/go-hostpool v0.0.0-20160125115350-e80d13ce29ed // indirect
 	github.com/scylladb/go-reflectx v1.0.1 // indirect
-	github.com/scylladb/gocqlx v1.5.0
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
