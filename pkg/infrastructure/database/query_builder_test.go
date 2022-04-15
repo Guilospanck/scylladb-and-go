@@ -6,6 +6,7 @@ import (
 	"base/pkg/infrastructure/database/models"
 	"base/pkg/infrastructure/logger"
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/Guilospanck/gocqlxmock"
@@ -29,6 +30,34 @@ func Test_Insert(t *testing.T) {
 
 		// assert
 		assert.NoError(t, err)
+		sut.session.AssertExpectations(t)
+		sut.session.AssertNumberOfCalls(t, "Query", 1)
+		sut.queryx.AssertNumberOfCalls(t, "WithContext", 1)
+		sut.queryx.AssertNumberOfCalls(t, "BindStruct", 1)
+		sut.queryx.AssertNumberOfCalls(t, "ExecRelease", 1)
+		sut.session.AssertCalled(t, "Query", sut.stmt, sut.names)
+		sut.queryx.AssertCalled(t, "WithContext", context.Background())
+		sut.queryx.AssertCalled(t, "BindStruct", &mocks.CompleteDataEntity)
+		sut.queryx.AssertCalled(t, "ExecRelease")
+	})
+
+	t.Run("Should not insert data and return error", func(t *testing.T) {
+		// arrange
+		sut := makeQueryBuilderSut[entities.TrackingDataEntity](QueryType(INSERT))
+		expectedErrorMsg := "test"
+		expectedError := fmt.Errorf(expectedErrorMsg)
+
+		sut.session.On("Query", sut.stmt, sut.names).Return(sut.queryx)
+		sut.queryx.On("WithContext", context.Background()).Return(sut.queryx)
+		sut.queryx.On("BindStruct", &mocks.CompleteDataEntity).Return(sut.queryx)
+		sut.queryx.On("ExecRelease").Return(expectedError)
+
+		// act
+		err := sut.queryBuilder.Insert(sut.ctx, &mocks.CompleteDataEntity)
+
+		// assert
+		assert.Error(t, err, expectedErrorMsg)
+		assert.Equal(t, expectedError, err)
 		sut.session.AssertExpectations(t)
 		sut.session.AssertNumberOfCalls(t, "Query", 1)
 		sut.queryx.AssertNumberOfCalls(t, "WithContext", 1)
