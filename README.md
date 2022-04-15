@@ -11,6 +11,8 @@ Using ScyllaDB with Go.
 - [gocql]
 - [gocqlx]
 - [govalidator]
+- [igocqlx]
+- [gocqlxmock]
 
 ### goclq
 `gocql` is the driver to use ScyllaDB with Golang.
@@ -202,3 +204,5 @@ Endpoint used to get all tracking data.
 [gocqlx]: https://github.com/scylladb/gocqlx
 [gocql]: https://github.com/scylladb/gocql
 [ScyllaDB]: https://www.scylladb.com/
+[igocqlx]: https://github.com/Guilospanck/igocqlx
+[gocqlxmock]: https://github.com/Guilospanck/gocqlxmock
