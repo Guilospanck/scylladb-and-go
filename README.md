@@ -104,6 +104,7 @@ type IQueryBuilder[t T] interface {
 ### Making requests
 You can use either the simple `curl` function or the `Insomnia` program.
 > If using Insomnia, be sure to go to Applications > Preferences and then uncheck "Validate certificates" under "Request/Response" section. This is needed in order to make requests to the HTTPS localhost.
+> To make requests from Edge, navigate to `edge://flags/#allow-insecure-localhost` and allow it.
 
 ## POST /api/v1/tracking
 Endpoint used to insert tracking data.
